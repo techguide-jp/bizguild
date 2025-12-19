@@ -1,0 +1,887 @@
+// Prisma schema (Prisma@6)
+// DB: PostgreSQL
+// 認証: lucia-auth
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "../docs/erd.md"
+  theme    = "default"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Enums
+// ============================================
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum InvitationStatus {
+  ISSUED
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum ScreeningStatus {
+  NOT_SUBMITTED
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum ProviderVisibility {
+  HIDDEN   // 提供者名を出さない（フロントのコンテンツとして見せる）
+  PARTIAL  // 提供者名は出すが詳細は抑える
+  FULL     // 提供者を明示
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProductType {
+  ONE_TIME
+  SUBSCRIPTION
+  OUTCOME
+  QUOTE
+}
+
+enum PriceKind {
+  FIXED
+  RANGE
+  SUBSCRIPTION
+  QUOTE
+  OUTCOME
+}
+
+enum PointMode {
+  FIXED
+  PERCENT
+}
+
+enum DealStage {
+  CONSULT
+  HEARING
+  PROPOSAL
+  ESTIMATE
+  ORDERED
+  DELIVERY
+  INVOICE
+  DONE
+  CANCELLED
+}
+
+enum DealMemberRole {
+  FRONT
+  PROVIDER
+  COLLABORATOR
+}
+
+enum TaskStatus {
+  TODO
+  DOING
+  DONE
+}
+
+enum DealDocumentType {
+  PROPOSAL
+  ESTIMATE
+  INVOICE
+  MEMO
+}
+
+enum DealDocumentStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  VOID
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum ContractType {
+  DIRECT_PROVIDER
+  FRONT_RESELL
+}
+
+enum PaymentProvider {
+  STRIPE
+  CASH
+  MANUAL
+}
+
+enum PaymentStatus {
+  INITIATED
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum SettlementKind {
+  SELLER_PAYOUT
+  PROVIDER_PAYOUT
+  PLATFORM_FEE
+}
+
+enum SettlementStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum SettlementMethod {
+  STRIPE_CONNECT
+  MANUAL
+}
+
+enum PointLedgerType {
+  EARN
+  SPEND
+  ADJUST
+  REVERSAL
+}
+
+enum PointLedgerStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum FileKind {
+  AVATAR
+  COVER
+  PRODUCT_IMAGE
+  DEAL_ATTACHMENT
+  OTHER
+}
+
+enum NotificationType {
+  SYSTEM
+  INQUIRY
+  DEAL
+  ORDER
+  POINT
+}
+
+// ============================================
+// Auth (lucia-auth)
+// ============================================
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  passwordHash  String?    // lucia-auth用（OAuth等を使う場合はnull可）
+  name          String?
+  avatarUrl     String?
+  slug          String?    @unique
+  status        UserStatus @default(PENDING)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // softDelete
+
+  // Auth
+  sessions Session[]
+
+  // Profile
+  profile UserProfile?
+  theme   UserTheme?
+
+  // Onboarding
+  invitationsSent      Invitation[]
+  screeningApplication ScreeningApplication?
+
+  // Catalog
+  products Product[]
+  boards   Board[]
+
+  // Recommendation
+  referralLinks ReferralLink[]
+
+  // Points (as provider/partner)
+  pointOffersAsProvider PointOffer[] @relation("PointOfferProvider")
+  pointOffersAsPartner  PointOffer[] @relation("PointOfferPartner")
+
+  // Inquiry/Deal
+  inquiriesReceived Inquiry[]      @relation("InquiryReceiver")
+  inquiriesSent     Inquiry[]      @relation("InquirySender")
+  dealsOwned        Deal[]         @relation("DealOwner")
+  dealsAsClient     Deal[]         @relation("DealClient")
+  dealMembers       DealMember[]
+  dealComments      DealComment[]
+  dealDocuments     DealDocument[] @relation("DealDocumentAuthor")
+
+  // Commerce
+  ordersSold   Order[]     @relation("OrderSeller")
+  ordersBought Order[]     @relation("OrderBuyer")
+  orderItems   OrderItem[] @relation("OrderItemProvider")
+  settlements  Settlement[]
+
+  // Points
+  pointAccount PointAccount?
+  pointLedgers PointLedger[]
+
+  // Misc
+  notifications Notification[]
+  files         FileAsset[]    @relation("FileOwner")
+  auditLogs     AuditLog[]     @relation("AuditActor")
+
+  @@index([status, createdAt])
+  @@index([deletedAt])
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+
+  @@index([userId])
+}
+
+model UserProfile {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  headline    String?
+  bio         String?
+  specialties String[] // PostgreSQLのtext[]
+  websiteUrl  String?
+  snsUrl      String?
+
+  updatedAt DateTime @updatedAt
+}
+
+model UserTheme {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // CSS変数に落とし込む前提のテーマ設定
+  // { primaryColor, accentColor, bgColor, textColor, fontFamily, borderRadius }
+  themeJson Json
+
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// Onboarding
+// ============================================
+
+model Invitation {
+  id           String           @id @default(cuid())
+  code         String           @unique
+  invitedEmail String?
+  status       InvitationStatus @default(ISSUED)
+
+  invitedById String
+  invitedBy   User   @relation(fields: [invitedById], references: [id], onDelete: Restrict)
+
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  acceptedAt DateTime?
+
+  @@index([status, createdAt])
+}
+
+model ScreeningApplication {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  status  ScreeningStatus @default(NOT_SUBMITTED)
+  payload Json? // 事業内容、実績、得意領域など
+
+  submittedAt DateTime?
+  reviewedAt  DateTime?
+
+  @@index([status])
+}
+
+// ============================================
+// Catalog
+// ============================================
+
+model Product {
+  id      String @id @default(cuid())
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+
+  status ProductStatus @default(DRAFT)
+  type   ProductType
+
+  title         String
+  summary       String?
+  descriptionMd String?
+
+  category String?
+  tags     String[] // text[]
+
+  // 全文検索用（PostgreSQL tsvector）
+  searchVector Unsupported("tsvector")?
+
+  providerVisibilityDefault ProviderVisibility @default(FULL)
+  acceptPoints              Boolean            @default(true)
+  maxPointRedeemRate        Float? // nullなら全体既定値（POINTS_MAX_REDEEM_RATE_DEFAULT）
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // softDelete
+
+  prices      ProductPrice[]
+  pointPolicy PointPolicy?
+  pointOffers PointOffer[]
+
+  images FileAsset[] @relation("ProductImages")
+
+  boardItems    BoardItem[]
+  referralLinks ReferralLink[]
+  orderItems    OrderItem[]
+
+  @@index([ownerId, status, createdAt])
+  @@index([deletedAt])
+}
+
+model ProductPrice {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  kind     PriceKind
+  currency String    @default("JPY")
+
+  // FIXED / SUBSCRIPTION / OUTCOME
+  amount Int?
+  // RANGE
+  amountMin Int?
+  amountMax Int?
+
+  // SUBSCRIPTION（例: month）
+  interval String?
+
+  note String?
+
+  createdAt DateTime @default(now())
+
+  @@index([productId, kind])
+}
+
+// ============================================
+// Points Configuration
+// ============================================
+
+model PointPolicy {
+  id        String  @id @default(cuid())
+  productId String  @unique
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  mode  PointMode
+  // FIXED: pt, PERCENT: 例) 500 = 5.00%（basis points）
+  value Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PointOffer {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // 提供者（商品オーナー）
+  providerId String
+  provider   User   @relation("PointOfferProvider", fields: [providerId], references: [id], onDelete: Restrict)
+
+  // パートナー（ポイント受給対象者）
+  partnerId String
+  partner   User   @relation("PointOfferPartner", fields: [partnerId], references: [id], onDelete: Restrict)
+
+  mode  PointMode
+  value Int
+
+  note     String?
+  isActive Boolean @default(true)
+
+  validFrom DateTime?
+  validTo   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, partnerId])
+  @@index([providerId, isActive])
+}
+
+// ============================================
+// Recommendation (Board / ReferralLink)
+// ============================================
+
+model Board {
+  id      String @id @default(cuid())
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  isPublic    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items BoardItem[]
+
+  @@index([ownerId, isPublic])
+}
+
+model BoardItem {
+  id      String @id @default(cuid())
+  boardId String
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  comment String?
+  tags    String[] // text[]
+
+  providerVisibility ProviderVisibility?
+
+  sortOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  referralLinks ReferralLink[]
+
+  @@index([boardId, sortOrder])
+  @@index([productId])
+}
+
+model ReferralLink {
+  id   String @id @default(cuid())
+  code String @unique
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  referrerId String
+  referrer   User   @relation(fields: [referrerId], references: [id], onDelete: Restrict)
+
+  boardItemId String?
+  boardItem   BoardItem? @relation(fields: [boardItemId], references: [id], onDelete: SetNull)
+
+  providerVisibility ProviderVisibility?
+
+  createdAt DateTime @default(now())
+  usedCount Int      @default(0)
+
+  orders Order[]
+
+  @@index([referrerId, createdAt])
+  @@index([productId])
+}
+
+// ============================================
+// Inquiry / Deal
+// ============================================
+
+model Inquiry {
+  id String @id @default(cuid())
+
+  receiverId String
+  receiver   User   @relation("InquiryReceiver", fields: [receiverId], references: [id], onDelete: Restrict)
+
+  // 相談者（ログインユーザーの場合）
+  senderId String?
+  sender   User?   @relation("InquirySender", fields: [senderId], references: [id], onDelete: SetNull)
+
+  // ゲスト相談の場合の連絡先
+  guestName  String?
+  guestEmail String?
+
+  message String
+
+  sourceJson Json? // productId/referralCode等の出どころを柔軟に保存
+  status     String @default("NEW")
+
+  createdAt DateTime @default(now())
+
+  deal Deal?
+
+  @@index([receiverId, createdAt])
+  @@index([senderId])
+}
+
+model Deal {
+  id String @id @default(cuid())
+
+  ownerId String
+  owner   User   @relation("DealOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+
+  // 顧客（案件の対象ユーザー）
+  clientId String?
+  client   User?   @relation("DealClient", fields: [clientId], references: [id], onDelete: SetNull)
+
+  inquiryId String?  @unique
+  inquiry   Inquiry? @relation(fields: [inquiryId], references: [id], onDelete: SetNull)
+
+  title         String
+  descriptionMd String?
+
+  stage DealStage @default(CONSULT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members     DealMember[]
+  tasks       DealTask[]
+  comments    DealComment[]
+  documents   DealDocument[]
+  shareTokens DealShareToken[]
+
+  files FileAsset[] @relation("DealAttachments")
+
+  orders Order[]
+
+  @@index([ownerId, stage, createdAt])
+  @@index([clientId])
+}
+
+model DealMember {
+  id String @id @default(cuid())
+
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  role            DealMemberRole
+  isClientVisible Boolean        @default(false)
+
+  invitedAt DateTime  @default(now())
+  joinedAt  DateTime?
+
+  // タスク割当用
+  assignedTasks DealTask[]
+
+  @@unique([dealId, userId])
+  @@index([userId, role])
+}
+
+model DealTask {
+  id String @id @default(cuid())
+
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  title         String
+  descriptionMd String?
+  status        TaskStatus @default(TODO)
+
+  // 案件メンバーへの割当（メンバー外への割当を防止）
+  assignedToId String?
+  assignedTo   DealMember? @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  dueAt           DateTime?
+  isClientVisible Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dealId, status])
+  @@index([assignedToId])
+}
+
+model DealComment {
+  id     String @id @default(cuid())
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  bodyMd          String
+  isClientVisible Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([dealId, createdAt])
+}
+
+model DealDocument {
+  id     String @id @default(cuid())
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  type   DealDocumentType
+  status DealDocumentStatus @default(DRAFT)
+
+  title     String?
+  contentMd String?
+  itemsJson Json?
+  totalAmount Int?
+  currency  String @default("JPY")
+
+  isClientVisible Boolean @default(false)
+
+  createdById String
+  createdBy   User   @relation("DealDocumentAuthor", fields: [createdById], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dealId, type, createdAt])
+}
+
+model DealShareToken {
+  id     String @id @default(cuid())
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  token     String    @unique
+  expiresAt DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+// ============================================
+// Commerce
+// ============================================
+
+model Order {
+  id      String @id @default(cuid())
+  orderNo String @unique
+
+  status       OrderStatus  @default(PENDING_PAYMENT)
+  contractType ContractType
+
+  // 売り手（顧客との契約主体）
+  sellerId String
+  seller   User   @relation("OrderSeller", fields: [sellerId], references: [id], onDelete: Restrict)
+
+  // 買い手（誰でも購入者になり得る）
+  buyerId String?
+  buyer   User?   @relation("OrderBuyer", fields: [buyerId], references: [id], onDelete: SetNull)
+
+  // ゲスト購入の場合
+  guestEmail String?
+  guestName  String?
+
+  dealId String?
+  deal   Deal?   @relation(fields: [dealId], references: [id], onDelete: SetNull)
+
+  referralLinkId String?
+  referralLink   ReferralLink? @relation(fields: [referralLinkId], references: [id], onDelete: SetNull)
+
+  // 紹介者（ポイント付与対象）: referralLink.referrer をスナップショット
+  referrerId String?
+
+  currency             String @default("JPY")
+  subtotalAmount       Int    @default(0)
+  pointsDiscountAmount Int    @default(0)
+  totalAmount          Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items        OrderItem[]
+  payments     Payment[]
+  settlements  Settlement[]
+  pointLedgers PointLedger[]
+
+  @@index([sellerId, status, createdAt])
+  @@index([buyerId, createdAt])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  // 実作業の提供者（ラッピングの場合、sellerとは別になる）
+  providerId String
+  provider   User   @relation("OrderItemProvider", fields: [providerId], references: [id], onDelete: Restrict)
+
+  quantity        Int @default(1)
+  unitPriceAmount Int
+  lineTotalAmount Int
+
+  // ラッピング/外注時: フロント→提供者への外注費
+  subcontractFeeAmount Int?
+
+  providerVisibilitySnapshot ProviderVisibility
+
+  // 購入時点のポイントルールスナップショット
+  pointPolicySnapshot Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+  @@index([providerId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  provider PaymentProvider
+  status   PaymentStatus   @default(INITIATED)
+
+  amount   Int
+  currency String @default("JPY")
+
+  // Stripe
+  stripePaymentIntentId String?
+  stripeChargeId        String?
+  stripeEventId         String? @unique // 冪等性担保
+
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([orderId, status])
+}
+
+model Settlement {
+  id String @id @default(cuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  kind        SettlementKind
+  recipientId String
+  recipient   User           @relation(fields: [recipientId], references: [id], onDelete: Restrict)
+
+  amount Int
+  status SettlementStatus @default(PENDING)
+  method SettlementMethod @default(MANUAL)
+
+  createdAt DateTime  @default(now())
+  paidAt    DateTime?
+
+  @@index([recipientId, status])
+  @@index([orderId, kind])
+}
+
+// ============================================
+// Points
+// ============================================
+
+model PointAccount {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  balance   Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model PointLedger {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type   PointLedgerType
+  status PointLedgerStatus @default(CONFIRMED)
+
+  points Int // +獲得, -利用/戻し
+
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  // 冪等性キー（例: "stripe:evt_123:earn"）
+  eventKey String? @unique
+
+  note String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([orderId])
+}
+
+// ============================================
+// File / Notification / AuditLog
+// ============================================
+
+model FileAsset {
+  id String @id @default(cuid())
+
+  ownerId String
+  owner   User   @relation("FileOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+
+  kind FileKind
+  url  String
+  mime String?
+  size Int?
+
+  // 関連（任意）
+  productId String?
+  product   Product? @relation("ProductImages", fields: [productId], references: [id], onDelete: SetNull)
+
+  dealId String?
+  deal   Deal?   @relation("DealAttachments", fields: [dealId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([ownerId, kind, createdAt])
+  @@index([productId])
+  @@index([dealId])
+}
+
+model Notification {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type    NotificationType
+  title   String
+  body    String?
+  linkUrl String?
+
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead, createdAt])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+
+  actorId String?
+  actor   User?   @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  action     String
+  entityType String?
+  entityId   String?
+  payload    Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([action, createdAt])
+  @@index([entityType, entityId])
+}
