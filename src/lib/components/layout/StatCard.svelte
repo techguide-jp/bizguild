@@ -16,20 +16,22 @@
 	let { title, value, description, icon: IconComponent, trend }: Props = $props();
 </script>
 
-<Card.Root>
+<Card.Root class="shadow-soft transition-all hover:shadow-soft-lg">
 	<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-		<Card.Title class="text-sm font-medium">{title}</Card.Title>
+		<Card.Title class="text-sm font-medium text-muted-foreground">{title}</Card.Title>
 		{#if IconComponent}
-			<IconComponent class="h-4 w-4 text-muted-foreground" />
+			<div class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
+				<IconComponent class="h-4 w-4 text-primary" />
+			</div>
 		{/if}
 	</Card.Header>
 	<Card.Content>
-		<div class="text-2xl font-bold">{value}</div>
+		<div class="text-2xl font-bold tracking-tight">{value}</div>
 		{#if description}
-			<p class="text-xs text-muted-foreground">{description}</p>
+			<p class="mt-1 text-xs text-muted-foreground">{description}</p>
 		{/if}
 		{#if trend}
-			<p class="text-xs {trend.value >= 0 ? 'text-green-600' : 'text-red-600'}">
+			<p class="mt-1 text-xs font-medium {trend.value >= 0 ? 'text-emerald-500' : 'text-rose-500'}">
 				{trend.value >= 0 ? '+' : ''}{trend.value}% {trend.label}
 			</p>
 		{/if}

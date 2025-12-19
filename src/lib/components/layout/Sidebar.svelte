@@ -77,16 +77,16 @@
 <aside class={cn('flex h-full w-64 flex-col border-r bg-card', className)}>
 	<!-- Header -->
 	<div class="flex h-16 items-center justify-between border-b px-4">
-		<a href="/app/dashboard" class="flex items-center gap-2">
+		<a href="/app/dashboard" class="flex items-center gap-2.5">
 			<div
-				class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"
+				class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-pink-400 text-primary-foreground shadow-soft"
 			>
 				<span class="text-sm font-bold">B</span>
 			</div>
-			<span class="text-lg font-semibold">BizGuild</span>
+			<span class="text-lg font-semibold tracking-tight">BizGuild</span>
 		</a>
 		{#if onClose}
-			<button onclick={onClose} class="rounded-md p-1 hover:bg-accent lg:hidden">
+			<button onclick={onClose} class="rounded-xl p-1.5 hover:bg-accent lg:hidden">
 				<X class="h-5 w-5" />
 			</button>
 		{/if}
@@ -98,10 +98,10 @@
 			<button
 				onclick={handleModeToggle}
 				class={cn(
-					'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+					'flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all',
 					uiMode.current === 'PROVIDER'
-						? 'bg-blue-100 text-blue-700'
-						: 'bg-green-100 text-green-700'
+						? 'bg-gradient-to-r from-pink-100 to-rose-100 text-rose-600'
+						: 'bg-gradient-to-r from-emerald-100 to-teal-100 text-teal-600'
 				)}
 			>
 				{#if uiMode.current === 'PROVIDER'}
@@ -114,14 +114,14 @@
 			</button>
 			<Switch checked={uiMode.current === 'SEEKER'} onCheckedChange={handleModeToggle} />
 		</div>
-		<p class="mt-1 text-xs text-muted-foreground">
+		<p class="mt-1.5 text-xs text-muted-foreground">
 			{uiMode.current === 'PROVIDER' ? 'サービスを提供・販売' : '協業先・サービスを探す'}
 		</p>
 	</div>
 
 	<!-- Navigation -->
 	<nav class="flex-1 space-y-1 overflow-y-auto p-4">
-		<div class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+		<div class="mb-2 px-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
 			メイン
 		</div>
 		{#each navItems as item}
@@ -129,9 +129,9 @@
 				href={item.href}
 				onclick={onClose}
 				class={cn(
-					'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+					'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
 					isActive(item.href)
-						? 'bg-primary text-primary-foreground'
+						? 'bg-primary text-primary-foreground shadow-soft'
 						: 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
 				)}
 			>
@@ -145,9 +145,9 @@
 				href={item.href}
 				onclick={onClose}
 				class={cn(
-					'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+					'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
 					isActive(item.href)
-						? 'bg-primary text-primary-foreground'
+						? 'bg-primary text-primary-foreground shadow-soft'
 						: 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
 				)}
 			>
@@ -157,7 +157,7 @@
 		{/each}
 
 		<div
-			class="mb-2 mt-6 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+			class="mb-2 mt-6 px-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70"
 		>
 			設定
 		</div>
@@ -166,9 +166,9 @@
 				href={item.href}
 				onclick={onClose}
 				class={cn(
-					'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+					'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
 					isActive(item.href)
-						? 'bg-primary text-primary-foreground'
+						? 'bg-primary text-primary-foreground shadow-soft'
 						: 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
 				)}
 			>
@@ -179,7 +179,7 @@
 
 		{#if currentUser.isAdmin}
 			<div
-				class="mb-2 mt-6 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+				class="mb-2 mt-6 px-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70"
 			>
 				管理
 			</div>
@@ -188,9 +188,9 @@
 					href={item.href}
 					onclick={onClose}
 					class={cn(
-						'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+						'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
 						isActive(item.href)
-							? 'bg-primary text-primary-foreground'
+							? 'bg-primary text-primary-foreground shadow-soft'
 							: 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
 					)}
 				>
@@ -205,11 +205,11 @@
 	<div class="border-t p-4">
 		<a
 			href={`/u/${currentUser.slug}`}
-			class="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-accent"
+			class="flex items-center gap-3 rounded-xl p-2.5 transition-all hover:bg-accent"
 		>
-			<Avatar.Root class="h-8 w-8">
+			<Avatar.Root class="h-9 w-9 ring-2 ring-primary/20">
 				<Avatar.Image src={currentUser.avatarUrl} alt={currentUser.name} />
-				<Avatar.Fallback>{currentUser.name.slice(0, 2)}</Avatar.Fallback>
+				<Avatar.Fallback class="bg-gradient-to-br from-primary/80 to-pink-400/80 text-white">{currentUser.name.slice(0, 2)}</Avatar.Fallback>
 			</Avatar.Root>
 			<div class="flex-1 truncate">
 				<p class="truncate text-sm font-medium">{currentUser.name}</p>

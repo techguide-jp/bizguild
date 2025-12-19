@@ -7,7 +7,13 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Select from '$lib/components/ui/select';
 	import { bookmarkedProducts, PRODUCT_TYPE_LABELS } from '$lib/mock';
-	import { Bookmark, BookmarkMinus, ExternalLink, Search, Package } from 'lucide-svelte';
+	import { Bookmark, BookmarkMinus, Search, Package } from 'lucide-svelte';
+
+	function handleRemoveBookmark(e: MouseEvent) {
+		e.preventDefault();
+		e.stopPropagation();
+		// TODO: ブックマーク解除処理
+	}
 
 	let sortBy = $state('newest');
 
@@ -75,49 +81,44 @@
 
 		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{#each sortedProducts() as product}
-				<Card.Root class="overflow-hidden transition-shadow hover:shadow-lg">
-					{#if product.images[0]}
-						<img src={product.images[0]} alt={product.title} class="h-40 w-full object-cover" />
-					{:else}
-						<div class="flex h-40 items-center justify-center bg-muted">
-							<Package class="h-12 w-12 text-muted-foreground" />
-						</div>
-					{/if}
-					<Card.Header class="pb-2">
-						<div class="flex items-start justify-between">
-							<div>
-								<Badge variant="secondary" class="mb-2">{PRODUCT_TYPE_LABELS[product.type]}</Badge>
-								<Card.Title class="text-base">{product.title}</Card.Title>
+				<a href={`/p/${product.id}`} class="group block">
+					<Card.Root class="h-full overflow-hidden shadow-soft transition-all group-hover:shadow-soft-lg group-hover:-translate-y-1">
+						{#if product.images[0]}
+							<img src={product.images[0]} alt={product.title} class="h-40 w-full object-cover" />
+						{:else}
+							<div class="flex h-40 items-center justify-center bg-muted">
+								<Package class="h-12 w-12 text-muted-foreground" />
 							</div>
-							<Button variant="ghost" size="icon" class="h-8 w-8 text-amber-500">
-								<BookmarkMinus class="h-4 w-4" />
-							</Button>
-						</div>
-						{#if product.summary}
-							<Card.Description class="line-clamp-2">{product.summary}</Card.Description>
 						{/if}
-					</Card.Header>
-					<Card.Content class="pb-2">
-						<!-- Provider -->
-						<a
-							href={`/u/${product.owner.slug}`}
-							class="flex items-center gap-2 rounded p-1 transition-colors hover:bg-accent"
-						>
-							<Avatar.Root class="h-6 w-6">
-								<Avatar.Image src={product.owner.avatarUrl} alt={product.owner.name} />
-								<Avatar.Fallback class="text-xs">{product.owner.name.slice(0, 2)}</Avatar.Fallback>
-							</Avatar.Root>
-							<span class="text-sm text-muted-foreground">{product.owner.name}</span>
-						</a>
-					</Card.Content>
-					<Card.Footer class="flex items-center justify-between">
-						<span class="font-medium">{formatPrice(product)}</span>
-						<Button variant="default" size="sm" href={`/p/${product.id}`}>
-							詳細を見る
-							<ExternalLink class="ml-1 h-3 w-3" />
-						</Button>
-					</Card.Footer>
-				</Card.Root>
+						<Card.Header class="pb-2">
+							<div class="flex items-start justify-between">
+								<div>
+									<Badge variant="secondary" class="mb-2">{PRODUCT_TYPE_LABELS[product.type]}</Badge>
+									<Card.Title class="text-base">{product.title}</Card.Title>
+								</div>
+								<Button variant="ghost" size="icon" class="h-8 w-8 text-amber-500" onclick={handleRemoveBookmark}>
+									<BookmarkMinus class="h-4 w-4" />
+								</Button>
+							</div>
+							{#if product.summary}
+								<Card.Description class="line-clamp-2">{product.summary}</Card.Description>
+							{/if}
+						</Card.Header>
+						<Card.Content class="pb-2">
+							<!-- Provider -->
+							<div class="flex items-center gap-2 rounded p-1">
+								<Avatar.Root class="h-6 w-6">
+									<Avatar.Image src={product.owner.avatarUrl} alt={product.owner.name} />
+									<Avatar.Fallback class="text-xs">{product.owner.name.slice(0, 2)}</Avatar.Fallback>
+								</Avatar.Root>
+								<span class="text-sm text-muted-foreground">{product.owner.name}</span>
+							</div>
+						</Card.Content>
+						<Card.Footer>
+							<span class="font-medium">{formatPrice(product)}</span>
+						</Card.Footer>
+					</Card.Root>
+				</a>
 			{/each}
 		</div>
 	{/if}

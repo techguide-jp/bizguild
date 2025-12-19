@@ -6,7 +6,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import InquiryDialog from '$lib/components/InquiryDialog.svelte';
 	import { users, products } from '$lib/mock';
-	import { ExternalLink, Heart } from 'lucide-svelte';
+	import { Heart } from 'lucide-svelte';
 
 	const slug = $page.params.slug;
 	const user = users.find((u) => u.slug === slug) || users[0];
@@ -66,43 +66,41 @@
 		{#if userProducts.length > 0}
 			<div class="grid gap-6 sm:grid-cols-2">
 				{#each userProducts as product}
-					<Card.Root class="overflow-hidden transition-shadow hover:shadow-lg">
-						{#if product.images[0]}
-							<img
-								src={product.images[0]}
-								alt={product.title}
-								class="h-40 w-full object-cover"
-							/>
-						{/if}
-						<Card.Header>
-							<Card.Title class="text-lg">{product.title}</Card.Title>
-							{#if product.summary}
-								<Card.Description>{product.summary}</Card.Description>
+					<a href={`/p/${product.id}`} class="group block">
+						<Card.Root class="h-full overflow-hidden shadow-soft transition-all group-hover:shadow-soft-lg group-hover:-translate-y-1">
+							{#if product.images[0]}
+								<img
+									src={product.images[0]}
+									alt={product.title}
+									class="h-40 w-full object-cover"
+								/>
 							{/if}
-						</Card.Header>
-						<Card.Content>
-							<div class="flex flex-wrap gap-1">
-								{#each product.tags.slice(0, 3) as tag}
-									<Badge variant="outline" class="text-xs">{tag}</Badge>
-								{/each}
-							</div>
-						</Card.Content>
-						<Card.Footer class="flex items-center justify-between">
-							<div class="text-sm text-muted-foreground">
-								{#if product.price}
-									¥{product.price.toLocaleString()}
-								{:else if product.priceMin && product.priceMax}
-									¥{product.priceMin.toLocaleString()} 〜 ¥{product.priceMax.toLocaleString()}
-								{:else}
-									要相談
+							<Card.Header>
+								<Card.Title class="text-lg">{product.title}</Card.Title>
+								{#if product.summary}
+									<Card.Description>{product.summary}</Card.Description>
 								{/if}
-							</div>
-							<Button variant="ghost" size="sm" href={`/p/${product.id}`}>
-								詳細を見る
-								<ExternalLink class="ml-1 h-4 w-4" />
-							</Button>
-						</Card.Footer>
-					</Card.Root>
+							</Card.Header>
+							<Card.Content>
+								<div class="flex flex-wrap gap-1">
+									{#each product.tags.slice(0, 3) as tag}
+										<Badge variant="outline" class="text-xs">{tag}</Badge>
+									{/each}
+								</div>
+							</Card.Content>
+							<Card.Footer>
+								<div class="text-sm font-medium">
+									{#if product.price}
+										¥{product.price.toLocaleString()}
+									{:else if product.priceMin && product.priceMax}
+										¥{product.priceMin.toLocaleString()} 〜 ¥{product.priceMax.toLocaleString()}
+									{:else}
+										要相談
+									{/if}
+								</div>
+							</Card.Footer>
+						</Card.Root>
+					</a>
 				{/each}
 			</div>
 		{:else}
