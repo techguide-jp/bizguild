@@ -11,7 +11,14 @@ import type {
 	Bookmark,
 	ViewHistory,
 	FeedItem,
-	UIMode
+	UIMode,
+	ProductAnalytics,
+	DailyStats,
+	TrafficAnalytics,
+	TagAnalytics,
+	VisitorAnalytics,
+	ReferralAnalytics,
+	AnalyticsSummary
 } from './types';
 
 // === ユーザー ===
@@ -570,3 +577,107 @@ export const followingFeed = feedItems.filter((item) =>
 
 // === UIモード（初期値） ===
 export let currentUIMode: UIMode = 'PROVIDER';
+
+// ===== 分析関連モックデータ =====
+
+// 日付生成ヘルパー
+function generateDates(days: number): string[] {
+	const dates: string[] = [];
+	const today = new Date();
+	for (let i = days - 1; i >= 0; i--) {
+		const date = new Date(today);
+		date.setDate(date.getDate() - i);
+		dates.push(date.toISOString().split('T')[0]);
+	}
+	return dates;
+}
+
+// 過去30日の日別統計
+export const dailyStats: DailyStats[] = generateDates(30).map((date, i) => ({
+	date,
+	views: Math.floor(Math.random() * 50) + 20 + (i % 7 === 0 ? -10 : 0), // 週末は少なめ
+	profileViews: Math.floor(Math.random() * 20) + 5,
+	inquiries: Math.floor(Math.random() * 5),
+	followers: Math.floor(Math.random() * 3)
+}));
+
+// 商品別分析（現在のユーザーの商品）
+export const productAnalytics: ProductAnalytics[] = products
+	.filter((p) => p.owner.id === currentUser.id)
+	.map((product) => {
+		const views = Math.floor(Math.random() * 500) + 100;
+		const inquiries = Math.floor(Math.random() * 20) + 5;
+		const conversions = Math.floor(inquiries * (Math.random() * 0.4 + 0.1));
+		return {
+			productId: product.id,
+			product,
+			views,
+			bookmarks: Math.floor(views * (Math.random() * 0.1 + 0.05)),
+			inquiries,
+			conversions,
+			conversionRate: Math.round((conversions / inquiries) * 100)
+		};
+	});
+
+// 流入元分析
+export const trafficAnalytics: TrafficAnalytics[] = [
+	{ source: 'SEARCH', count: 450, percentage: 35 },
+	{ source: 'PROFILE', count: 320, percentage: 25 },
+	{ source: 'PRODUCT', count: 256, percentage: 20 },
+	{ source: 'REFERRAL', count: 128, percentage: 10 },
+	{ source: 'ROOM', count: 77, percentage: 6 },
+	{ source: 'DIRECT', count: 51, percentage: 4 }
+];
+
+// タグ分析
+export const tagAnalytics: TagAnalytics[] = [
+	{ tag: 'SEO', views: 320, inquiries: 15 },
+	{ tag: 'マーケティング', views: 280, inquiries: 12 },
+	{ tag: 'コンサルティング', views: 210, inquiries: 8 },
+	{ tag: '広告', views: 180, inquiries: 10 },
+	{ tag: 'リスティング', views: 150, inquiries: 7 }
+];
+
+// 訪問者属性（専門領域）
+export const visitorAnalytics: VisitorAnalytics[] = [
+	{ specialty: 'Web開発', count: 120, percentage: 28 },
+	{ specialty: 'マーケティング', count: 95, percentage: 22 },
+	{ specialty: 'デザイン', count: 78, percentage: 18 },
+	{ specialty: '経営・コンサル', count: 65, percentage: 15 },
+	{ specialty: 'EC・小売', count: 45, percentage: 10 },
+	{ specialty: 'その他', count: 30, percentage: 7 }
+];
+
+// 紹介リンク分析
+export const referralAnalytics: ReferralAnalytics[] = [
+	{
+		refCode: 'tanaka-prod1',
+		product: products[0],
+		referrer: users[1],
+		clicks: 85,
+		inquiries: 12,
+		conversions: 4,
+		pointsEarned: 40000
+	},
+	{
+		refCode: 'tanaka-prod4',
+		product: products[3],
+		referrer: users[2],
+		clicks: 45,
+		inquiries: 6,
+		conversions: 2,
+		pointsEarned: 15000
+	}
+];
+
+// 分析サマリー（30日）
+export const analyticsSummary: AnalyticsSummary = {
+	period: '30d',
+	totalViews: dailyStats.reduce((sum, d) => sum + d.views, 0),
+	totalInquiries: dailyStats.reduce((sum, d) => sum + d.inquiries, 0),
+	totalConversions: 12,
+	conversionRate: 28,
+	followerCount: 47,
+	followerGrowth: dailyStats.reduce((sum, d) => sum + d.followers, 0),
+	avgResponseTime: 45 // 分
+};

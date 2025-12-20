@@ -22,7 +22,8 @@
 		Rss,
 		X,
 		Store,
-		Compass
+		Compass,
+		BarChart3
 	} from 'lucide-svelte';
 
 	interface Props {
@@ -35,6 +36,7 @@
 	// 提供モードのナビ
 	const providerNavItems = [
 		{ href: '/app/dashboard', label: 'ダッシュボード', icon: LayoutDashboard },
+		{ href: '/app/analytics', label: '分析', icon: BarChart3 },
 		{ href: '/app/products', label: '商品管理', icon: Package },
 		{ href: '/app/room', label: 'おすすめ', icon: Heart },
 		{ href: '/app/inquiries', label: '相談', icon: MessageSquare },

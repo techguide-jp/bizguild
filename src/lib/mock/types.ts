@@ -227,3 +227,93 @@ export const UI_MODE_LABELS: Record<UIMode, string> = {
 	PROVIDER: '提供モード',
 	SEEKER: '探索モード'
 };
+
+// ===== 分析関連 =====
+
+// 商品分析データ
+export interface ProductAnalytics {
+	productId: string;
+	product: Product;
+	views: number;
+	bookmarks: number;
+	inquiries: number;
+	conversions: number;
+	conversionRate: number;
+}
+
+// 日別統計
+export interface DailyStats {
+	date: string;
+	views: number;
+	profileViews: number;
+	inquiries: number;
+	followers: number;
+}
+
+// 流入元
+export type TrafficSource = 'SEARCH' | 'PROFILE' | 'PRODUCT' | 'REFERRAL' | 'ROOM' | 'DIRECT';
+
+// 流入元ラベル
+export const TRAFFIC_SOURCE_LABELS: Record<TrafficSource, string> = {
+	SEARCH: '検索',
+	PROFILE: 'プロフィール',
+	PRODUCT: '商品ページ',
+	REFERRAL: '紹介リンク',
+	ROOM: 'おすすめ',
+	DIRECT: 'ダイレクト'
+};
+
+// 流入元分析
+export interface TrafficAnalytics {
+	source: TrafficSource;
+	count: number;
+	percentage: number;
+}
+
+// 紹介リンク分析
+export interface ReferralAnalytics {
+	refCode: string;
+	product: Product;
+	referrer: User;
+	clicks: number;
+	inquiries: number;
+	conversions: number;
+	pointsEarned: number;
+}
+
+// タグ分析
+export interface TagAnalytics {
+	tag: string;
+	views: number;
+	inquiries: number;
+}
+
+// 訪問者属性
+export interface VisitorAnalytics {
+	specialty: string;
+	count: number;
+	percentage: number;
+}
+
+// 分析期間
+export type AnalyticsPeriod = '7d' | '30d' | '90d' | 'custom';
+
+// 分析期間ラベル
+export const ANALYTICS_PERIOD_LABELS: Record<AnalyticsPeriod, string> = {
+	'7d': '過去7日',
+	'30d': '過去30日',
+	'90d': '過去90日',
+	custom: 'カスタム'
+};
+
+// 分析サマリー
+export interface AnalyticsSummary {
+	period: AnalyticsPeriod;
+	totalViews: number;
+	totalInquiries: number;
+	totalConversions: number;
+	conversionRate: number;
+	followerCount: number;
+	followerGrowth: number;
+	avgResponseTime: number;
+}

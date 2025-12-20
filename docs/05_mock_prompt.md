@@ -28,7 +28,8 @@
 ### 提供モード（Provider Mode）
 **目的**: 自分のサービスを提供・販売したい
 - ダッシュボード: 相談数、案件進捗、売上、ポイント残高
-- 重点ナビ: 商品管理、案件管理、相談一覧、注文（販売）
+- 分析: 商品パフォーマンス、相談転換率、プロフィール閲覧、紹介効果
+- 重点ナビ: 商品管理、分析、案件管理、相談一覧、注文（販売）
 - サイドバー上部にモード切替トグル
 
 ### 探索モード（Seeker Mode）
@@ -67,6 +68,7 @@
 | パス | 説明 |
 |------|------|
 | `/app/dashboard` | ダッシュボード（モードで内容切替） |
+| `/app/analytics` | 分析ダッシュボード（商品・相談・プロフィール分析） |
 | `/app/products` | 商品一覧（自分の商品、ステータスフィルタ） |
 | `/app/products/new` | 商品作成フォーム |
 | `/app/products/[id]/edit` | 商品編集フォーム |
@@ -177,6 +179,40 @@
 - 新商品追加、商品更新、おすすめ更新などのアクティビティ
 - 無限スクロール
 - 各アイテムから商品詳細・提供者プロフィールへリンク
+
+### 分析ダッシュボード `/app/analytics`
+提供者向けのパフォーマンス分析画面。タブで切り替え。
+
+**概要タブ（デフォルト）**:
+- 期間セレクタ: 7日/30日/90日/カスタム
+- サマリーカード: 総閲覧数、総相談数、転換率、フォロワー数
+- 閲覧数推移グラフ（折れ線、日別）
+- 相談数推移グラフ（棒グラフ、日別）
+
+**商品分析タブ**:
+- 商品別パフォーマンステーブル
+  - 商品名、閲覧数、ブックマーク数、相談数、転換率
+  - ソート可能（各指標でソート）
+- 人気商品ランキング（閲覧数TOP5）
+- 人気タグ分析（どのタグが集客に効いているか）
+
+**相談分析タブ**:
+- 相談数推移（日/週/月）
+- 流入元分析（商品ページ/プロフィール/紹介リンク）
+- 相談→成約の転換率
+- 平均応答時間
+
+**プロフィール分析タブ**:
+- プロフィール閲覧数推移
+- フォロワー数推移
+- 流入経路（検索/おすすめ/紹介リンク）
+- 訪問者の専門領域分布（円グラフ）
+
+**紹介分析タブ**:
+- 紹介リンク別パフォーマンス
+  - 商品名、クリック数、相談数、成約数、獲得ポイント
+- 紹介元分析（誰経由の成約が多いか）
+- 紹介ポイント獲得推移
 
 ---
 
@@ -357,6 +393,75 @@ interface FeedItem {
 
 // UIモード
 type UIMode = 'PROVIDER' | 'SEEKER';
+
+// ===== 分析関連 =====
+
+// 商品分析データ
+interface ProductAnalytics {
+  productId: string;
+  product: Product;
+  views: number;           // 閲覧数
+  bookmarks: number;       // ブックマーク数
+  inquiries: number;       // 相談数
+  conversions: number;     // 成約数
+  conversionRate: number;  // 転換率（相談→成約）
+}
+
+// 日別統計
+interface DailyStats {
+  date: string;            // YYYY-MM-DD
+  views: number;           // 閲覧数
+  profileViews: number;    // プロフィール閲覧数
+  inquiries: number;       // 相談数
+  followers: number;       // 新規フォロワー数
+}
+
+// 流入元
+type TrafficSource = 'SEARCH' | 'PROFILE' | 'PRODUCT' | 'REFERRAL' | 'ROOM' | 'DIRECT';
+
+// 流入元分析
+interface TrafficAnalytics {
+  source: TrafficSource;
+  count: number;
+  percentage: number;
+}
+
+// 紹介リンク分析
+interface ReferralAnalytics {
+  refCode: string;
+  product: Product;
+  referrer: User;          // 紹介者
+  clicks: number;          // クリック数
+  inquiries: number;       // 相談数
+  conversions: number;     // 成約数
+  pointsEarned: number;    // 獲得ポイント
+}
+
+// タグ分析
+interface TagAnalytics {
+  tag: string;
+  views: number;           // このタグ経由の閲覧数
+  inquiries: number;       // このタグ経由の相談数
+}
+
+// 訪問者属性
+interface VisitorAnalytics {
+  specialty: string;       // 専門領域
+  count: number;
+  percentage: number;
+}
+
+// 分析サマリー
+interface AnalyticsSummary {
+  period: '7d' | '30d' | '90d' | 'custom';
+  totalViews: number;
+  totalInquiries: number;
+  totalConversions: number;
+  conversionRate: number;
+  followerCount: number;
+  followerGrowth: number;  // 期間中の増減
+  avgResponseTime: number; // 平均応答時間（分）
+}
 ```
 
 ---
