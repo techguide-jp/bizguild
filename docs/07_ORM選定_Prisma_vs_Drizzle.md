@@ -1,4 +1,5 @@
 # ORM選定: Prisma vs Drizzle
+
 作成日: 2025-12-19
 
 ## 結論
@@ -9,25 +10,26 @@
 
 ## 比較表
 
-| 観点 | Prisma | Drizzle | このPJでの重要度 |
-|------|--------|---------|-----------------|
-| 型安全性 | ◎ 自動生成 | ◎ TypeScript native | 高 |
-| スキーマ定義 | ◎ DSL（可読性高） | △ TypeScript（冗長） | 高 |
-| マイグレーション | ◎ 成熟 | ○ 発展中 | 高 |
-| パフォーマンス | △ ランタイム重い | ◎ 軽量 | 中 |
-| Edge Runtime | × 非対応（Accelerate必要） | ◎ 完全対応 | 低（初期） |
-| Cold start | △ 遅め | ◎ 高速 | 低（初期） |
-| GUI | ◎ Prisma Studio | × なし | 中 |
-| lucia-auth統合 | ◎ adapter成熟 | ○ adapterあり | 高 |
-| PostgreSQL機能 | ○ tsvector対応 | ○ tsvector対応 | 中 |
-| コミュニティ | ◎ 大規模 | ○ 成長中 | 中 |
-| SvelteKit統合 | ○ 手動設定 | ◎ sv create対応 | 低 |
+| 観点             | Prisma                     | Drizzle              | このPJでの重要度 |
+| ---------------- | -------------------------- | -------------------- | ---------------- |
+| 型安全性         | ◎ 自動生成                 | ◎ TypeScript native  | 高               |
+| スキーマ定義     | ◎ DSL（可読性高）          | △ TypeScript（冗長） | 高               |
+| マイグレーション | ◎ 成熟                     | ○ 発展中             | 高               |
+| パフォーマンス   | △ ランタイム重い           | ◎ 軽量               | 中               |
+| Edge Runtime     | × 非対応（Accelerate必要） | ◎ 完全対応           | 低（初期）       |
+| Cold start       | △ 遅め                     | ◎ 高速               | 低（初期）       |
+| GUI              | ◎ Prisma Studio            | × なし               | 中               |
+| lucia-auth統合   | ◎ adapter成熟              | ○ adapterあり        | 高               |
+| PostgreSQL機能   | ○ tsvector対応             | ○ tsvector対応       | 中               |
+| コミュニティ     | ◎ 大規模                   | ○ 成長中             | 中               |
+| SvelteKit統合    | ○ 手動設定                 | ◎ sv create対応      | 低               |
 
 ---
 
 ## Prismaの強み
 
 1. **直感的なスキーマ定義**
+
    ```prisma
    model User {
      id    String @id @default(cuid())
@@ -35,6 +37,7 @@
      posts Post[]
    }
    ```
+
    - DSLが読みやすい
    - リレーションが明確
 
@@ -66,12 +69,11 @@
    - 追加サービス不要
 
 3. **SQLに近い記法**
+
    ```typescript
-   const users = await db
-     .select()
-     .from(usersTable)
-     .where(eq(usersTable.email, email));
+   const users = await db.select().from(usersTable).where(eq(usersTable.email, email));
    ```
+
    - SQLを知っていれば直感的
    - 複雑なクエリも書きやすい
 
@@ -84,12 +86,16 @@
 ## Drizzleの弱み（このPJにおいて）
 
 1. **スキーマ定義が冗長**
+
    ```typescript
    export const users = pgTable('users', {
-     id: text('id').primaryKey().$defaultFn(() => cuid()),
-     email: text('email').notNull().unique(),
+   	id: text('id')
+   		.primaryKey()
+   		.$defaultFn(() => cuid()),
+   	email: text('email').notNull().unique()
    });
    ```
+
    - Prisma DSLより記述量が多い
    - 20+テーブルあると管理が大変
 
@@ -142,6 +148,7 @@
 2. **ハイブリッド構成**
    - 読み取り専用の軽量クエリだけDrizzleに移行
    - PrismaとDrizzleは共存可能
+
    ```typescript
    // 重い処理: Prisma（トランザクション）
    await prisma.$transaction([...]);
@@ -158,11 +165,12 @@
 
 ## 最終結論
 
-| 選択 | 理由 |
-|------|------|
+| 選択           | 理由                                                             |
+| -------------- | ---------------------------------------------------------------- |
 | **Prisma継続** | 既存スキーマ活用、複雑なリレーション管理、マイグレーション成熟度 |
 
 **再検討トリガー:**
+
 - Cold startが3秒以上かかる
 - Edge Functionsが必須になった
 - Drizzleのマイグレーションツールが成熟した

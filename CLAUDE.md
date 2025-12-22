@@ -5,23 +5,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## プロジェクト概要
 
 事業者ネットワーク型サービス。起業家・事業者間で横断依頼を協業で解決するプラットフォーム。
+
 - 顧客窓口一本化（たらい回し防止）
 - おすすめ機能（楽天ROOM的）でクロスセル促進
 - 紹介ポイントシステム
 
 ## 技術スタック
 
-| カテゴリ | 技術 |
-|---------|------|
-| Frontend/Server | SvelteKit 2 + Svelte 5 |
-| ORM | Prisma 7 (PostgreSQL) |
-| 認証 | lucia-auth |
-| 決済 | Stripe (Payment Intents + Webhook) |
-| ストレージ | S3互換 (Cloudflare R2等) |
-| UIライブラリ | shadcn-svelte |
-| CSS | Tailwind CSS v4 |
-| アイコン | Lucide Svelte |
-| フォーム | Superforms + Zod |
+| カテゴリ        | 技術                               |
+| --------------- | ---------------------------------- |
+| Frontend/Server | SvelteKit 2 + Svelte 5             |
+| ORM             | Prisma 7 (PostgreSQL)              |
+| 認証            | lucia-auth                         |
+| 決済            | Stripe (Payment Intents + Webhook) |
+| ストレージ      | S3互換 (Cloudflare R2等)           |
+| UIライブラリ    | shadcn-svelte                      |
+| CSS             | Tailwind CSS v4                    |
+| アイコン        | Lucide Svelte                      |
+| フォーム        | Superforms + Zod                   |
 
 ## アーキテクチャ
 
@@ -69,6 +70,7 @@ src/
 ## ロール設計
 
 案件ごとのロール（ユーザ種別は固定でない、誰でも購入者にも提供者にもなり得る）:
+
 - **Front**: 顧客窓口/案件オーナー
 - **Provider**: 役務提供（実作業）担当
 - **Collaborator**: 協力メンバー
@@ -83,6 +85,7 @@ src/
 ## Prismaスキーマ
 
 `docs/03_schema.prisma` を参照。主要モデル:
+
 - `User` / `Session` / `UserProfile` / `UserTheme`
 - `Product` / `ProductPrice` / `PointPolicy` / `PointOffer`
 - `Board` / `BoardItem` / `ReferralLink`
@@ -135,6 +138,7 @@ pnpm add -D prisma-erd-generator @mermaid-js/mermaid-cli
 ## ルーティング設計
 
 ### 公開ページ
+
 - `/u/[slug]` - 公開プロフィール
 - `/u/[slug]/room` - おすすめボード
 - `/p/[productId]` - 商品ページ
@@ -142,21 +146,23 @@ pnpm add -D prisma-erd-generator @mermaid-js/mermaid-cli
 - `/client/deals/[token]` - 顧客向け案件閲覧（ログイン不要）
 
 ### 認証
+
 - `/login`, `/register`, `/invite/[code]`, `/screening`
 
 ### アプリ
+
 - `/app/dashboard`, `/app/products`, `/app/room`
 - `/app/inquiries`, `/app/deals`, `/app/orders`, `/app/points`
 - `/app/settings/*`, `/app/admin`
 
 ## 状態管理
 
-| 種類 | 管理方法 |
-|------|---------|
-| サーバー状態 | SvelteKit load関数 + invalidate |
-| グローバルUI状態 | Svelte 5 $state (context) |
-| ローカルUI状態 | Svelte 5 $state |
-| フォーム状態 | Superforms |
+| 種類             | 管理方法                        |
+| ---------------- | ------------------------------- |
+| サーバー状態     | SvelteKit load関数 + invalidate |
+| グローバルUI状態 | Svelte 5 $state (context)       |
+| ローカルUI状態   | Svelte 5 $state                 |
+| フォーム状態     | Superforms                      |
 
 ## UI実装ルール
 
