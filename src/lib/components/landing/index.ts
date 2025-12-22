@@ -1,0 +1,12 @@
+export { default as LandingHeader } from './LandingHeader.svelte';
+export { default as HeroSection } from './HeroSection.svelte';
+export { default as ProblemSection } from './ProblemSection.svelte';
+export { default as SolutionSection } from './SolutionSection.svelte';
+export { default as UseCaseSection } from './UseCaseSection.svelte';
+export { default as FeatureSection } from './FeatureSection.svelte';
+export { default as ComparisonSection } from './ComparisonSection.svelte';
+export { default as PricingSection } from './PricingSection.svelte';
+export { default as StepsSection } from './StepsSection.svelte';
+export { default as FaqSection } from './FaqSection.svelte';
+export { default as CtaSection } from './CtaSection.svelte';
+export { default as LandingFooter } from './LandingFooter.svelte';
