@@ -171,6 +171,7 @@ pnpm add -D prisma-erd-generator @mermaid-js/mermaid-cli
 - **エラー**: トースト通知（svelte-sonner）
 - **フォーム**: Superforms + Zod、サーバー/クライアント両方でバリデーション
 - **テーマ**: 公開ページはUserThemeをCSS変数として適用
+- **ナビゲーション**: ESLintルールに従い、内部リンクは `resolve()` を使用
 
 ## 開発時の注意点
 
@@ -186,3 +187,4 @@ pnpm add -D prisma-erd-generator @mermaid-js/mermaid-cli
 - `docs/02_詳細設計書.md` - 詳細設計書
 - `docs/03_schema.prisma` - Prismaスキーマ
 - `docs/06_UI設計書.md` - UI設計書
+- `docs/sveltekit-eslint-navigation-rules.md` - ナビゲーションのESLintルール
