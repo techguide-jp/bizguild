@@ -23,7 +23,10 @@ export default defineConfig(
 		rules: {
 			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-			'no-undef': 'off'
+			'no-undef': 'off',
+
+			// {@html}は意図的に使用（XSSリスクは開発者が管理）- 警告のみ
+			'svelte/no-at-html-tags': 'warn'
 		}
 	},
 	{
@@ -36,6 +39,13 @@ export default defineConfig(
 				parser: ts.parser,
 				svelteConfig
 			}
+		}
+	},
+	{
+		// 汎用UIコンポーネントはhrefを呼び出し側で解決するため除外
+		files: ['src/lib/components/ui/button/button.svelte'],
+		rules: {
+			'svelte/no-navigation-without-resolve': 'off'
 		}
 	}
 );

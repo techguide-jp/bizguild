@@ -114,7 +114,10 @@
 
 	<div class="flex gap-2">
 		<!-- Y軸の値 -->
-		<div class="flex flex-col justify-between text-right text-[10px] text-muted-foreground tabular-nums" style="height: {chartHeight}px; margin-top: {chartTop}px;">
+		<div
+			class="flex flex-col justify-between text-right text-[10px] text-muted-foreground tabular-nums"
+			style="height: {chartHeight}px; margin-top: {chartTop}px;"
+		>
 			<span>{yScale().max}</span>
 			<span>{yScale().mid}</span>
 			<span>{yScale().min}</span>
@@ -122,9 +125,14 @@
 
 		<!-- グラフ本体 -->
 		<div class="flex-1">
-			<svg viewBox="0 0 100 {height}" class="w-full" style="height: {height}px;" preserveAspectRatio="none">
+			<svg
+				viewBox="0 0 100 {height}"
+				class="w-full"
+				style="height: {height}px;"
+				preserveAspectRatio="none"
+			>
 				<!-- Grid lines -->
-				{#each gridLines() as line}
+				{#each gridLines() as line (line.label)}
 					<line
 						x1="0"
 						y1={line.y}
@@ -151,7 +159,7 @@
 				/>
 
 				<!-- Data points (間引いて表示) -->
-				{#each data as point, i}
+				{#each data as point, i (i)}
 					{#if i % Math.ceil(data.length / 15) === 0 || i === data.length - 1}
 						{@const stepX = chartWidth / (data.length - 1 || 1)}
 						{@const x = chartLeft + i * stepX}
@@ -165,8 +173,8 @@
 
 	<!-- X軸ラベル -->
 	{#if showLabels && data.length > 0}
-		<div class="ml-6 flex justify-between text-[10px] text-muted-foreground mt-1">
-			{#each xLabels() as { label }}
+		<div class="mt-1 ml-6 flex justify-between text-[10px] text-muted-foreground">
+			{#each xLabels() as { label, index } (index)}
 				<span>{label}</span>
 			{/each}
 		</div>

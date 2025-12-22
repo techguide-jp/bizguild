@@ -15,12 +15,12 @@
 	let { data, size = 160, donut = true, showLegend = true }: Props = $props();
 
 	const defaultColors = [
-		'oklch(0.68 0.12 15)',   // primary pink
-		'oklch(0.7 0.1 170)',    // teal
-		'oklch(0.7 0.1 300)',    // purple
-		'oklch(0.75 0.12 80)',   // yellow
-		'oklch(0.65 0.15 250)',  // blue
-		'oklch(0.6 0.1 30)'      // orange
+		'oklch(0.68 0.12 15)', // primary pink
+		'oklch(0.7 0.1 170)', // teal
+		'oklch(0.7 0.1 300)', // purple
+		'oklch(0.75 0.12 80)', // yellow
+		'oklch(0.65 0.15 250)', // blue
+		'oklch(0.6 0.1 30)' // orange
 	];
 
 	const total = $derived(data.reduce((sum, d) => sum + d.value, 0));
@@ -57,13 +57,9 @@
 
 <div class="flex items-center gap-4">
 	<div style="width: {size}px; height: {size}px;" class="relative">
-		<svg viewBox="0 0 100 100" class="w-full h-full -rotate-0">
-			{#each segments() as segment}
-				<path
-					d={segment.path}
-					fill={segment.color}
-					class="transition-opacity hover:opacity-80"
-				/>
+		<svg viewBox="0 0 100 100" class="h-full w-full -rotate-0">
+			{#each segments() as segment (segment.label)}
+				<path d={segment.path} fill={segment.color} class="transition-opacity hover:opacity-80" />
 			{/each}
 			{#if donut}
 				<circle cx="50" cy="50" r="25" fill="var(--card)" />
@@ -81,12 +77,9 @@
 
 	{#if showLegend}
 		<div class="flex flex-col gap-1.5">
-			{#each segments() as segment}
+			{#each segments() as segment (segment.label)}
 				<div class="flex items-center gap-2 text-sm">
-					<div
-						class="h-3 w-3 rounded-sm"
-						style="background-color: {segment.color};"
-					></div>
+					<div class="h-3 w-3 rounded-sm" style="background-color: {segment.color};"></div>
 					<span class="text-muted-foreground">{segment.label}</span>
 					<span class="font-medium">{segment.percentage.toFixed(0)}%</span>
 				</div>

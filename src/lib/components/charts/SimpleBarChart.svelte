@@ -17,10 +17,13 @@
 		data,
 		height = 200,
 		color = 'var(--primary)',
-		showValues = true,
+		showValues: _showValues = true,
 		yAxisLabel,
 		xAxisLabel
 	}: Props = $props();
+
+	// showValues is currently unused but kept for future use
+	void _showValues;
 
 	// Y軸の範囲を計算
 	const yScale = $derived(() => {
@@ -58,7 +61,10 @@
 
 	<div class="flex gap-2">
 		<!-- Y軸の値 -->
-		<div class="flex flex-col justify-between text-right text-[10px] text-muted-foreground tabular-nums" style="height: {chartHeight}px;">
+		<div
+			class="flex flex-col justify-between text-right text-[10px] text-muted-foreground tabular-nums"
+			style="height: {chartHeight}px;"
+		>
 			<span>{yScale().max}</span>
 			<span>{yScale().mid}</span>
 			<span>{yScale().min}</span>
@@ -68,7 +74,7 @@
 		<div class="flex-1" style="height: {chartHeight}px;">
 			<div class="relative h-full">
 				<!-- グリッド線 -->
-				<div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+				<div class="pointer-events-none absolute inset-0 flex flex-col justify-between">
 					<div class="border-b border-dashed border-muted-foreground/15"></div>
 					<div class="border-b border-dashed border-muted-foreground/15"></div>
 					<div class="border-b border-muted-foreground/20"></div>
@@ -76,16 +82,21 @@
 
 				<!-- バー -->
 				<div class="relative flex h-full items-end gap-px">
-					{#each data as point}
+					{#each data as point, i (i)}
 						{@const percentage = yScale().max > 0 ? (point.value / yScale().max) * 100 : 0}
-						<div class="group flex flex-1 flex-col items-center justify-end h-full min-w-0">
+						<div class="group flex h-full min-w-0 flex-1 flex-col items-center justify-end">
 							<!-- ホバー時の値表示 -->
-							<div class="opacity-0 group-hover:opacity-100 transition-opacity text-[9px] font-medium text-foreground mb-0.5 pointer-events-none">
+							<div
+								class="pointer-events-none mb-0.5 text-[9px] font-medium text-foreground opacity-0 transition-opacity group-hover:opacity-100"
+							>
 								{point.value}
 							</div>
 							<div
 								class="w-full rounded-t-sm transition-all group-hover:opacity-80"
-								style="height: {percentage}%; background-color: {color}; min-height: {point.value > 0 ? '1px' : '0'};"
+								style="height: {percentage}%; background-color: {color}; min-height: {point.value >
+								0
+									? '1px'
+									: '0'};"
 							></div>
 						</div>
 					{/each}
@@ -95,8 +106,8 @@
 	</div>
 
 	<!-- X軸ラベル -->
-	<div class="ml-6 flex justify-between text-[10px] text-muted-foreground mt-1">
-		{#each xLabels() as { label }}
+	<div class="mt-1 ml-6 flex justify-between text-[10px] text-muted-foreground">
+		{#each xLabels() as { label, index } (index)}
 			<span>{label}</span>
 		{/each}
 	</div>

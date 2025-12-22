@@ -576,7 +576,7 @@ export const followingFeed = feedItems.filter((item) =>
 );
 
 // === UIモード（初期値） ===
-export let currentUIMode: UIMode = 'PROVIDER';
+export const currentUIMode: UIMode = 'PROVIDER';
 
 // ===== 分析関連モックデータ =====
 

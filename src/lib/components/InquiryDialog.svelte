@@ -79,23 +79,12 @@
 		<form onsubmit={handleSubmit} class="space-y-4">
 			<div class="space-y-2">
 				<Label for="inquiry-name">お名前</Label>
-				<Input
-					id="inquiry-name"
-					placeholder="山田 太郎"
-					bind:value={name}
-				/>
+				<Input id="inquiry-name" placeholder="山田 太郎" bind:value={name} />
 			</div>
 			<div class="space-y-2">
 				<Label for="inquiry-email">メールアドレス</Label>
-				<Input
-					id="inquiry-email"
-					type="email"
-					placeholder="you@example.com"
-					bind:value={email}
-				/>
-				<p class="text-xs text-muted-foreground">
-					返信のためにメールアドレスをご入力ください
-				</p>
+				<Input id="inquiry-email" type="email" placeholder="you@example.com" bind:value={email} />
+				<p class="text-xs text-muted-foreground">返信のためにメールアドレスをご入力ください</p>
 			</div>
 			<div class="space-y-2">
 				<Label for="inquiry-message">相談内容 *</Label>
@@ -108,9 +97,7 @@
 				/>
 			</div>
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (open = false)}>
-					キャンセル
-				</Button>
+				<Button type="button" variant="outline" onclick={() => (open = false)}>キャンセル</Button>
 				<Button type="submit" disabled={isLoading}>
 					{#if isLoading}
 						送信中...
