@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { PageHeader, EmptyState } from '$lib/components/layout';
 	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
@@ -29,9 +30,9 @@
 		}
 	}
 
-	async function convertToDeal(inquiryId: string) {
+	async function convertToDeal() {
 		toast.success('案件を作成しました');
-		goto('/app/deals');
+		goto(resolve('/app/deals'));
 	}
 </script>
 
@@ -66,7 +67,7 @@
 	<div class="mt-6">
 		{#if filteredInquiries().length > 0}
 			<div class="space-y-4">
-				{#each filteredInquiries() as inquiry}
+				{#each filteredInquiries() as inquiry (inquiry.id)}
 					<Card.Root
 						class="transition-colors {inquiry.status === 'NEW'
 							? 'border-primary bg-primary/5'
@@ -75,9 +76,7 @@
 						<Card.Header class="pb-2">
 							<div class="flex items-start justify-between">
 								<div class="flex items-center gap-3">
-									<div
-										class="flex h-10 w-10 items-center justify-center rounded-full bg-muted"
-									>
+									<div class="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
 										<Mail class="h-5 w-5 text-muted-foreground" />
 									</div>
 									<div>
@@ -87,18 +86,20 @@
 										{/if}
 									</div>
 								</div>
-								
-								<Badge variant={getStatusBadge(inquiry.status).variant}>{getStatusBadge(inquiry.status).label}</Badge>
+
+								<Badge variant={getStatusBadge(inquiry.status).variant}
+									>{getStatusBadge(inquiry.status).label}</Badge
+								>
 							</div>
 						</Card.Header>
 						<Card.Content>
-							<p class="whitespace-pre-wrap text-sm">{inquiry.message}</p>
+							<p class="text-sm whitespace-pre-wrap">{inquiry.message}</p>
 
 							{#if inquiry.sourceProduct}
 								<div class="mt-4 flex items-center gap-2 rounded-lg bg-muted/50 p-2">
 									<span class="text-xs text-muted-foreground">関連商品:</span>
 									<a
-										href="/p/{inquiry.sourceProduct.id}"
+										href={resolve(`/p/${inquiry.sourceProduct.id}`)}
 										class="flex items-center gap-1 text-sm text-primary hover:underline"
 									>
 										{inquiry.sourceProduct.title}

@@ -73,7 +73,7 @@
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>
-						{#each displayOrders() as order}
+						{#each displayOrders() as order (order.id)}
 							<Table.Row>
 								<Table.Cell class="font-mono text-sm">{order.orderNo}</Table.Cell>
 								<Table.Cell>
@@ -93,7 +93,7 @@
 									{/if}
 								</Table.Cell>
 								<Table.Cell>
-									{#each order.items as item}
+									{#each order.items as item (item.product.id)}
 										<div class="text-sm">{item.product.title}</div>
 									{/each}
 								</Table.Cell>
@@ -123,9 +123,7 @@
 			<Card.Root>
 				<EmptyState
 					title="注文がありません"
-					description={activeTab === 'sales'
-						? 'まだ販売がありません'
-						: 'まだ購入がありません'}
+					description={activeTab === 'sales' ? 'まだ販売がありません' : 'まだ購入がありません'}
 					icon={Package}
 				/>
 			</Card.Root>

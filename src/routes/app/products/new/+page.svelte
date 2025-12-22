@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { PageHeader } from '$lib/components/layout';
 	import * as Card from '$lib/components/ui/card';
@@ -8,9 +9,8 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Select from '$lib/components/ui/select';
 	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { Separator } from '$lib/components/ui/separator';
 	import { toast } from 'svelte-sonner';
-	import { Package, Eye, Save } from 'lucide-svelte';
+	import { Package, Save } from 'lucide-svelte';
 
 	let title = $state('');
 	let summary = $state('');
@@ -44,15 +44,15 @@
 		isLoading = true;
 
 		// モック: 保存をシミュレート
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await new Promise((r) => setTimeout(r, 1000));
 
 		toast.success('商品を作成しました');
-		goto('/app/products');
+		goto(resolve('/app/products'));
 	}
 
 	async function handleSaveDraft() {
 		isLoading = true;
-		await new Promise((resolve) => setTimeout(resolve, 500));
+		await new Promise((r) => setTimeout(r, 500));
 		toast.success('下書きを保存しました');
 		isLoading = false;
 	}
@@ -81,12 +81,7 @@
 			<Card.Content class="space-y-4">
 				<div class="space-y-2">
 					<Label for="title">タイトル *</Label>
-					<Input
-						id="title"
-						placeholder="例: SEOコンサルティング"
-						bind:value={title}
-						required
-					/>
+					<Input id="title" placeholder="例: SEOコンサルティング" bind:value={title} required />
 				</div>
 
 				<div class="space-y-2">
@@ -132,7 +127,7 @@
 							{typeOptions.find((o) => o.value === type)?.label || '選択してください'}
 						</Select.Trigger>
 						<Select.Content>
-							{#each typeOptions as option}
+							{#each typeOptions as option (option.value)}
 								<Select.Item value={option.value}>{option.label}</Select.Item>
 							{/each}
 						</Select.Content>
@@ -142,12 +137,7 @@
 				{#if type === 'ONE_TIME' || type === 'SUBSCRIPTION'}
 					<div class="space-y-2">
 						<Label for="price">価格（円）</Label>
-						<Input
-							id="price"
-							type="number"
-							placeholder="例: 100000"
-							bind:value={price}
-						/>
+						<Input id="price" type="number" placeholder="例: 100000" bind:value={price} />
 						{#if type === 'SUBSCRIPTION'}
 							<p class="text-sm text-muted-foreground">※月額料金として表示されます</p>
 						{/if}
@@ -156,21 +146,11 @@
 					<div class="grid gap-4 sm:grid-cols-2">
 						<div class="space-y-2">
 							<Label for="priceMin">最低価格（円）</Label>
-							<Input
-								id="priceMin"
-								type="number"
-								placeholder="例: 500000"
-								bind:value={priceMin}
-							/>
+							<Input id="priceMin" type="number" placeholder="例: 500000" bind:value={priceMin} />
 						</div>
 						<div class="space-y-2">
 							<Label for="priceMax">最高価格（円）</Label>
-							<Input
-								id="priceMax"
-								type="number"
-								placeholder="例: 5000000"
-								bind:value={priceMax}
-							/>
+							<Input id="priceMax" type="number" placeholder="例: 5000000" bind:value={priceMax} />
 						</div>
 					</div>
 				{:else if type === 'OUTCOME'}
@@ -185,9 +165,7 @@
 		<Card.Root>
 			<Card.Header>
 				<Card.Title>ポイント設定</Card.Title>
-				<Card.Description>
-					紹介者へのポイント付与設定
-				</Card.Description>
+				<Card.Description>紹介者へのポイント付与設定</Card.Description>
 			</Card.Header>
 			<Card.Content class="space-y-4">
 				<div class="grid gap-4 sm:grid-cols-2">
@@ -227,9 +205,7 @@
 		<Card.Root>
 			<Card.Header>
 				<Card.Title>表示設定</Card.Title>
-				<Card.Description>
-					紹介リンクでの提供者情報の表示方法
-				</Card.Description>
+				<Card.Description>紹介リンクでの提供者情報の表示方法</Card.Description>
 			</Card.Header>
 			<Card.Content class="space-y-4">
 				<div class="space-y-2">
@@ -239,7 +215,7 @@
 							{visibilityOptions.find((o) => o.value === providerVisibility)?.label}
 						</Select.Trigger>
 						<Select.Content>
-							{#each visibilityOptions as option}
+							{#each visibilityOptions as option (option.value)}
 								<Select.Item value={option.value}>{option.label}</Select.Item>
 							{/each}
 						</Select.Content>
@@ -253,9 +229,7 @@
 
 		<!-- Actions -->
 		<div class="flex justify-end gap-4">
-			<Button variant="outline" type="button" href="/app/products">
-				キャンセル
-			</Button>
+			<Button variant="outline" type="button" href={resolve('/app/products')}>キャンセル</Button>
 			<Button type="submit" disabled={isLoading}>
 				{#if isLoading}
 					作成中...

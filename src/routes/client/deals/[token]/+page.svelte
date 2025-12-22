@@ -3,7 +3,6 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Separator } from '$lib/components/ui/separator';
 	import { deals, STAGE_LABELS, type DealStage } from '$lib/mock';
 	import { CheckCircle, Circle, Clock, Users, ListTodo, MessageSquare } from 'lucide-svelte';
 
@@ -68,7 +67,7 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="flex flex-wrap gap-2">
-						{#each stages as stage}
+						{#each stages as stage (stage)}
 							{@const status = getStageStatus(stage)}
 							<div
 								class="flex items-center gap-2 rounded-full px-3 py-1.5 text-sm
@@ -103,7 +102,7 @@
 					</Card.Header>
 					<Card.Content>
 						<div class="flex flex-wrap gap-4">
-							{#each visibleMembers as member}
+							{#each visibleMembers as member (member.user.id)}
 								<div class="flex items-center gap-3">
 									<Avatar.Root class="h-10 w-10">
 										<Avatar.Image src={member.user.avatarUrl} alt={member.user.name} />
@@ -137,10 +136,8 @@
 					</Card.Header>
 					<Card.Content>
 						<div class="space-y-3">
-							{#each visibleTasks as task}
-								<div
-									class="flex items-center justify-between rounded-lg border p-3"
-								>
+							{#each visibleTasks as task (task.id)}
+								<div class="flex items-center justify-between rounded-lg border p-3">
 									<div class="flex items-center gap-3">
 										{#if task.status === 'DONE'}
 											<CheckCircle class="h-5 w-5 text-green-500" />
@@ -191,7 +188,7 @@
 					</Card.Header>
 					<Card.Content>
 						<div class="space-y-4">
-							{#each visibleComments as comment}
+							{#each visibleComments as comment (comment.id)}
 								<div class="flex gap-3">
 									<Avatar.Root class="h-8 w-8">
 										<Avatar.Image src={comment.author.avatarUrl} alt={comment.author.name} />

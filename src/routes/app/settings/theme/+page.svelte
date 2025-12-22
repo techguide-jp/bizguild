@@ -102,15 +102,12 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="grid grid-cols-2 gap-3">
-						{#each presets as preset}
+						{#each presets as preset (preset.name)}
 							<button
 								class="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
 								onclick={() => applyPreset(preset)}
 							>
-								<div
-									class="h-8 w-8 rounded-full"
-									style="background-color: {preset.primary}"
-								></div>
+								<div class="h-8 w-8 rounded-full" style="background-color: {preset.primary}"></div>
 								<span class="text-sm font-medium">{preset.name}</span>
 							</button>
 						{/each}
@@ -146,8 +143,7 @@
 									/>
 									<Input
 										value={primaryColor}
-										oninput={(e) =>
-											(primaryColor = (e.target as HTMLInputElement).value)}
+										oninput={(e) => (primaryColor = (e.target as HTMLInputElement).value)}
 										class="font-mono"
 									/>
 								</div>
@@ -227,10 +223,7 @@
 					<Card.Description>公開ページでの見え方</Card.Description>
 				</Card.Header>
 				<Card.Content>
-					<div
-						class="overflow-hidden rounded-lg border"
-						style={previewStyle}
-					>
+					<div class="overflow-hidden rounded-lg border" style={previewStyle}>
 						<!-- Preview Header -->
 						<div class="p-4" style="background-color: var(--preview-bg)">
 							<div class="flex items-center gap-3">
@@ -241,10 +234,7 @@
 									{currentUser.name.slice(0, 1)}
 								</div>
 								<div>
-									<p
-										class="font-medium"
-										style="color: var(--preview-text)"
-									>
+									<p class="font-medium" style="color: var(--preview-text)">
 										{currentUser.name}
 									</p>
 									<p class="text-sm opacity-70" style="color: var(--preview-text)">

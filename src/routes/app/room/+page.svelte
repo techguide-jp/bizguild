@@ -1,9 +1,9 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { PageHeader, EmptyState } from '$lib/components/layout';
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { Badge } from '$lib/components/ui/badge';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { toast } from 'svelte-sonner';
 	import { boards, products, currentUser } from '$lib/mock';
@@ -49,7 +49,7 @@
 		icon={Heart}
 	>
 		{#snippet actions()}
-			<Button variant="outline" href="/u/{currentUser.slug}/room">
+			<Button variant="outline" href={resolve(`/u/${currentUser.slug}/room`)}>
 				<ExternalLink class="mr-2 h-4 w-4" />
 				プレビュー
 			</Button>
@@ -63,7 +63,7 @@
 	<div class="mt-6">
 		{#if items.length > 0}
 			<div class="space-y-4">
-				{#each items as item, index}
+				{#each items as item, index (item.product.id)}
 					<Card.Root>
 						<div class="flex items-start gap-4 p-4">
 							<button class="mt-2 cursor-grab text-muted-foreground hover:text-foreground">
@@ -157,7 +157,7 @@
 				<Card.Description>おすすめに追加する商品を選択してください</Card.Description>
 			</Card.Header>
 			<Card.Content class="max-h-96 space-y-2 overflow-y-auto">
-				{#each availableProducts as product}
+				{#each availableProducts as product (product.id)}
 					<button
 						class="flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-accent"
 						onclick={() => addProduct(product)}

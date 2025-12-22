@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
@@ -62,7 +62,7 @@
 	<!-- Search Bar -->
 	<div class="mb-6">
 		<div class="relative">
-			<Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+			<Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 			<Input
 				type="search"
 				placeholder="キーワードで検索..."
@@ -82,16 +82,18 @@
 		<Tabs.Content value="products">
 			<div class="mb-4 flex items-center justify-between">
 				<p class="text-sm text-muted-foreground">{filteredProducts.length}件の商品</p>
-				<Button variant="outline" size="sm" href="/app/discover/products">
+				<Button variant="outline" size="sm" href={resolve('/app/discover/products')}>
 					詳細検索
 					<ExternalLink class="ml-1 h-3 w-3" />
 				</Button>
 			</div>
 
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-				{#each filteredProducts as product}
-					<a href={`/p/${product.id}`} class="group block">
-						<Card.Root class="h-full overflow-hidden shadow-soft transition-all group-hover:shadow-soft-lg group-hover:-translate-y-1">
+				{#each filteredProducts as product (product.id)}
+					<a href={resolve(`/p/${product.id}`)} class="group block">
+						<Card.Root
+							class="shadow-soft group-hover:shadow-soft-lg h-full overflow-hidden transition-all group-hover:-translate-y-1"
+						>
 							{#if product.images[0]}
 								<img src={product.images[0]} alt={product.title} class="h-32 w-full object-cover" />
 							{/if}
@@ -110,7 +112,7 @@
 							</Card.Header>
 							<Card.Content class="pb-2">
 								<div class="flex flex-wrap gap-1">
-									{#each product.tags.slice(0, 3) as tag}
+									{#each product.tags.slice(0, 3) as tag (tag)}
 										<Badge variant="outline" class="text-xs">{tag}</Badge>
 									{/each}
 								</div>
@@ -127,16 +129,18 @@
 		<Tabs.Content value="providers">
 			<div class="mb-4 flex items-center justify-between">
 				<p class="text-sm text-muted-foreground">{filteredUsers.length}人の提供者</p>
-				<Button variant="outline" size="sm" href="/app/discover/providers">
+				<Button variant="outline" size="sm" href={resolve('/app/discover/providers')}>
 					詳細検索
 					<ExternalLink class="ml-1 h-3 w-3" />
 				</Button>
 			</div>
 
 			<div class="space-y-4">
-				{#each filteredUsers as user}
-					<a href={`/u/${user.slug}`} class="group block">
-						<Card.Root class="shadow-soft transition-all group-hover:shadow-soft-lg group-hover:-translate-y-0.5">
+				{#each filteredUsers as user (user.id)}
+					<a href={resolve(`/u/${user.slug}`)} class="group block">
+						<Card.Root
+							class="shadow-soft group-hover:shadow-soft-lg transition-all group-hover:-translate-y-0.5"
+						>
 							<Card.Content class="flex items-center gap-4 p-4">
 								<Avatar.Root class="h-14 w-14 ring-2 ring-primary/10">
 									<Avatar.Image src={user.avatarUrl} alt={user.name} />
@@ -148,7 +152,7 @@
 										<p class="text-sm text-muted-foreground">{user.headline}</p>
 									{/if}
 									<div class="mt-2 flex flex-wrap gap-1">
-										{#each user.specialties.slice(0, 3) as specialty}
+										{#each user.specialties.slice(0, 3) as specialty (specialty)}
 											<Badge variant="outline" class="text-xs">{specialty}</Badge>
 										{/each}
 									</div>

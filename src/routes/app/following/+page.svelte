@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import EmptyState from '$lib/components/layout/EmptyState.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -42,7 +43,7 @@
 		/>
 	{:else}
 		<div class="space-y-6">
-			{#each followingUsers as user}
+			{#each followingUsers as user (user.id)}
 				<Card.Root>
 					<Card.Content class="p-6">
 						<div class="flex flex-col gap-4 sm:flex-row sm:items-start">
@@ -66,7 +67,7 @@
 								</div>
 
 								<div class="mt-2 flex flex-wrap gap-2">
-									{#each user.specialties as specialty}
+									{#each user.specialties as specialty (specialty)}
 										<Badge variant="secondary">{specialty}</Badge>
 									{/each}
 								</div>
@@ -76,9 +77,9 @@
 									<div class="mt-4">
 										<p class="mb-2 text-sm font-medium text-muted-foreground">最新の商品</p>
 										<div class="grid gap-2 sm:grid-cols-2">
-											{#each getLatestProducts(user.id) as product}
+											{#each getLatestProducts(user.id) as product (product.id)}
 												<a
-													href={`/p/${product.id}`}
+													href={resolve(`/p/${product.id}`)}
 													class="flex items-center gap-2 rounded-lg border p-2 transition-colors hover:bg-accent"
 												>
 													{#if product.images[0]}

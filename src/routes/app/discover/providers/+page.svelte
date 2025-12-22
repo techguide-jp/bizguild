@@ -41,9 +41,7 @@
 <div class="p-6">
 	<PageHeader title="提供者を探す" description="専門家やサービス提供者を検索" icon={Users}>
 		{#snippet actions()}
-			<Button variant="outline" href="/app/discover">
-				戻る
-			</Button>
+			<Button variant="outline" href="/app/discover">戻る</Button>
 		{/snippet}
 	</PageHeader>
 
@@ -52,7 +50,7 @@
 		<Card.Content class="p-4">
 			<!-- Search -->
 			<div class="relative">
-				<Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+				<Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 				<Input
 					type="search"
 					placeholder="名前や専門分野で検索..."
@@ -72,7 +70,7 @@
 					>
 						すべて
 					</Badge>
-					{#each allSpecialties as specialty}
+					{#each allSpecialties as specialty (specialty)}
 						<Badge
 							variant={selectedSpecialty === specialty ? 'default' : 'outline'}
 							class="cursor-pointer"
@@ -92,7 +90,7 @@
 	</div>
 
 	<div class="space-y-4">
-		{#each filteredUsers() as user}
+		{#each filteredUsers() as user (user.id)}
 			<Card.Root class="transition-shadow hover:shadow-md">
 				<Card.Content class="p-6">
 					<div class="flex flex-col gap-4 sm:flex-row sm:items-start">
@@ -116,7 +114,7 @@
 							</div>
 
 							<div class="mt-3 flex flex-wrap gap-2">
-								{#each user.specialties as specialty}
+								{#each user.specialties as specialty (specialty)}
 									<Badge variant="secondary">{specialty}</Badge>
 								{/each}
 							</div>

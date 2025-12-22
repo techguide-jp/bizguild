@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
@@ -6,7 +7,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Select from '$lib/components/ui/select';
 	import { products, PRODUCT_TYPE_LABELS } from '$lib/mock';
-	import { Package, Search, Bookmark, Filter } from 'lucide-svelte';
+	import { Package, Search, Bookmark } from 'lucide-svelte';
 
 	function handleBookmark(e: MouseEvent) {
 		e.preventDefault();
@@ -67,9 +68,7 @@
 <div class="p-6">
 	<PageHeader title="商品を探す" description="サービスや商品を検索・フィルタ" icon={Package}>
 		{#snippet actions()}
-			<Button variant="outline" href="/app/discover">
-				戻る
-			</Button>
+			<Button variant="outline" href={resolve('/app/discover')}>戻る</Button>
 		{/snippet}
 	</PageHeader>
 
@@ -79,7 +78,7 @@
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				<!-- Search -->
 				<div class="relative sm:col-span-2">
-					<Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+					<Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 					<Input
 						type="search"
 						placeholder="キーワードで検索..."
@@ -91,11 +90,13 @@
 				<!-- Type Filter -->
 				<Select.Root type="single" bind:value={selectedType}>
 					<Select.Trigger>
-						{selectedType ? PRODUCT_TYPE_LABELS[selectedType as keyof typeof PRODUCT_TYPE_LABELS] : '種別で絞り込み'}
+						{selectedType
+							? PRODUCT_TYPE_LABELS[selectedType as keyof typeof PRODUCT_TYPE_LABELS]
+							: '種別で絞り込み'}
 					</Select.Trigger>
 					<Select.Content>
 						<Select.Item value="">すべて</Select.Item>
-						{#each productTypes as type}
+						{#each productTypes as type (type.value)}
 							<Select.Item value={type.value}>{type.label}</Select.Item>
 						{/each}
 					</Select.Content>
@@ -104,7 +105,11 @@
 				<!-- Sort -->
 				<Select.Root type="single" bind:value={sortBy}>
 					<Select.Trigger>
-						{sortBy === 'newest' ? '新着順' : sortBy === 'price-low' ? '価格が安い順' : '価格が高い順'}
+						{sortBy === 'newest'
+							? '新着順'
+							: sortBy === 'price-low'
+								? '価格が安い順'
+								: '価格が高い順'}
 					</Select.Trigger>
 					<Select.Content>
 						<Select.Item value="newest">新着順</Select.Item>
@@ -118,7 +123,7 @@
 			<div class="mt-4">
 				<p class="mb-2 text-sm font-medium">タグで絞り込み</p>
 				<div class="flex flex-wrap gap-2">
-					{#each allTags as tag}
+					{#each allTags as tag (tag)}
 						<Badge
 							variant="outline"
 							class="cursor-pointer hover:bg-accent"
@@ -138,9 +143,11 @@
 	</div>
 
 	<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-		{#each filteredProducts() as product}
-			<a href={`/p/${product.id}`} class="group block">
-				<Card.Root class="h-full overflow-hidden shadow-soft transition-all group-hover:shadow-soft-lg group-hover:-translate-y-1">
+		{#each filteredProducts() as product (product.id)}
+			<a href={resolve(`/p/${product.id}`)} class="group block">
+				<Card.Root
+					class="shadow-soft group-hover:shadow-soft-lg h-full overflow-hidden transition-all group-hover:-translate-y-1"
+				>
 					{#if product.images[0]}
 						<img src={product.images[0]} alt={product.title} class="h-40 w-full object-cover" />
 					{:else}
@@ -164,7 +171,7 @@
 					</Card.Header>
 					<Card.Content class="pb-2">
 						<div class="flex flex-wrap gap-1">
-							{#each product.tags.slice(0, 3) as tag}
+							{#each product.tags.slice(0, 3) as tag (tag)}
 								<Badge variant="outline" class="text-xs">{tag}</Badge>
 							{/each}
 						</div>

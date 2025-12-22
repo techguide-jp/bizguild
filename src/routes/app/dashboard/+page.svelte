@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { PageHeader, StatCard } from '$lib/components/layout';
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
@@ -102,7 +103,11 @@
 				icon={TrendingUp}
 				trend={{ value: 12.5, label: '先月比' }}
 			/>
-			<StatCard title="ポイント残高" value="{pointAccount.balance.toLocaleString()}pt" icon={Coins} />
+			<StatCard
+				title="ポイント残高"
+				value="{pointAccount.balance.toLocaleString()}pt"
+				icon={Coins}
+			/>
 		</div>
 
 		<div class="mt-8 grid gap-6 lg:grid-cols-2">
@@ -121,7 +126,7 @@
 				<Card.Content>
 					{#if recentInquiries.length > 0}
 						<div class="space-y-4">
-							{#each recentInquiries as inquiry}
+							{#each recentInquiries as inquiry (inquiry.id)}
 								<div class="flex items-start justify-between gap-4 rounded-lg border p-3">
 									<div class="flex-1 space-y-1">
 										<div class="flex items-center gap-2">
@@ -163,9 +168,9 @@
 				<Card.Content>
 					{#if activeDealsData.length > 0}
 						<div class="space-y-4">
-							{#each activeDealsData as deal}
+							{#each activeDealsData as deal (deal.id)}
 								<a
-									href="/app/deals/{deal.id}"
+									href={resolve(`/app/deals/${deal.id}`)}
 									class="block rounded-lg border p-3 transition-colors hover:bg-accent"
 								>
 									<div class="flex items-center justify-between gap-4">
@@ -235,10 +240,10 @@
 				<Card.Content>
 					{#if newFromFollowing.length > 0}
 						<div class="space-y-4">
-							{#each newFromFollowing as item}
+							{#each newFromFollowing as item, i (i)}
 								{#if item.product}
 									<a
-										href={`/p/${item.product.id}`}
+										href={resolve(`/p/${item.product.id}`)}
 										class="flex gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
 									>
 										{#if item.product.images[0]}
@@ -297,9 +302,9 @@
 				<Card.Content>
 					{#if recommendedProducts.length > 0}
 						<div class="space-y-4">
-							{#each recommendedProducts as product}
+							{#each recommendedProducts as product (product.id)}
 								<a
-									href={`/p/${product.id}`}
+									href={resolve(`/p/${product.id}`)}
 									class="flex gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
 								>
 									{#if product.images[0]}
@@ -361,9 +366,9 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-						{#each bookmarkedProducts.slice(0, 3) as product}
+						{#each bookmarkedProducts.slice(0, 3) as product (product.id)}
 							<a
-								href={`/p/${product.id}`}
+								href={resolve(`/p/${product.id}`)}
 								class="flex gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
 							>
 								{#if product.images[0]}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { PageHeader } from '$lib/components/layout';
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
@@ -21,7 +22,7 @@
 		e.preventDefault();
 		isLoading = true;
 
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await new Promise((r) => setTimeout(r, 1000));
 
 		toast.success('プロフィールを更新しました');
 		isLoading = false;
@@ -35,7 +36,7 @@
 <div class="p-6">
 	<PageHeader title="プロフィール設定" description="あなたの情報を編集します" icon={User}>
 		{#snippet actions()}
-			<Button variant="outline" href="/u/{currentUser.slug}">
+			<Button variant="outline" href={resolve(`/u/${currentUser.slug}`)}>
 				<ExternalLink class="mr-2 h-4 w-4" />
 				公開ページを見る
 			</Button>
@@ -57,7 +58,7 @@
 						</Avatar.Root>
 						<button
 							type="button"
-							class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg"
+							class="absolute right-0 bottom-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg"
 							onclick={() => toast.info('画像アップロード機能（モック）')}
 						>
 							<Camera class="h-4 w-4" />
@@ -93,9 +94,7 @@
 						<span class="text-sm text-muted-foreground">/u/</span>
 						<Input id="slug" bind:value={slug} required />
 					</div>
-					<p class="text-xs text-muted-foreground">
-						公開プロフィールのURLに使用されます
-					</p>
+					<p class="text-xs text-muted-foreground">公開プロフィールのURLに使用されます</p>
 				</div>
 			</Card.Content>
 		</Card.Root>

@@ -15,7 +15,9 @@
 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 	<div class="flex items-center gap-3">
 		{#if IconComponent}
-			<div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-pink-200/50 text-primary shadow-soft">
+			<div
+				class="shadow-soft flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-pink-200/50 text-primary"
+			>
 				<IconComponent class="h-5 w-5" />
 			</div>
 		{/if}

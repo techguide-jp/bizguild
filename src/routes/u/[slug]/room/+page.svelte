@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -40,9 +41,7 @@
 					<h1 class="text-xl font-bold" style="color: var(--theme-text)">
 						{user.name}のおすすめ
 					</h1>
-					<p class="text-sm text-muted-foreground">
-						信頼できるパートナーのサービスをご紹介します
-					</p>
+					<p class="text-sm text-muted-foreground">信頼できるパートナーのサービスをご紹介します</p>
 				</div>
 			</div>
 		</div>
@@ -52,9 +51,11 @@
 	<main class="mx-auto max-w-4xl px-4 py-8">
 		{#if board && board.items.length > 0}
 			<div class="space-y-6">
-				{#each board.items as item}
-					<a href={`/r/${slug}-${item.product.id}`} class="group block">
-						<Card.Root class="overflow-hidden shadow-soft transition-all group-hover:shadow-soft-lg group-hover:-translate-y-0.5">
+				{#each board.items as item (item.product.id)}
+					<a href={resolve(`/r/${slug}-${item.product.id}`)} class="group block">
+						<Card.Root
+							class="shadow-soft group-hover:shadow-soft-lg overflow-hidden transition-all group-hover:-translate-y-0.5"
+						>
 							<div class="flex flex-col sm:flex-row">
 								{#if item.product.images[0]}
 									<div class="sm:w-48">
@@ -69,7 +70,7 @@
 									{#if item.comment}
 										<div class="mb-4 flex items-start gap-2 rounded-lg bg-muted/50 p-3">
 											<Quote class="mt-0.5 h-4 w-4 text-muted-foreground" />
-											<p class="text-sm italic text-muted-foreground">{item.comment}</p>
+											<p class="text-sm text-muted-foreground italic">{item.comment}</p>
 										</div>
 									{/if}
 									<h3 class="text-lg font-semibold">{item.product.title}</h3>
@@ -89,7 +90,7 @@
 										<span class="text-sm text-muted-foreground">{item.product.owner.name}</span>
 									</div>
 									<div class="mt-3 flex flex-wrap gap-1">
-										{#each item.product.tags.slice(0, 3) as tag}
+										{#each item.product.tags.slice(0, 3) as tag (tag)}
 											<Badge variant="outline" class="text-xs">{tag}</Badge>
 										{/each}
 									</div>

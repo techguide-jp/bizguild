@@ -124,7 +124,7 @@
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
-					{#each pointAccount.ledger as entry}
+					{#each pointAccount.ledger as entry, i (i)}
 						{@const typeInfo = getTypeInfo(entry.type)}
 						<Table.Row>
 							<Table.Cell class="text-sm text-muted-foreground">

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { PageHeader, EmptyState } from '$lib/components/layout';
 	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
@@ -6,7 +7,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { products, currentUser, PRODUCT_TYPE_LABELS } from '$lib/mock';
-	import { Package, Plus, Search, Edit, Eye, Archive } from 'lucide-svelte';
+	import { Package, Plus, Search, Edit, Eye } from 'lucide-svelte';
 
 	let searchQuery = $state('');
 	let activeTab = $state('all');
@@ -56,7 +57,7 @@
 <div class="p-6">
 	<PageHeader title="商品管理" description="あなたの商品を管理します" icon={Package}>
 		{#snippet actions()}
-			<Button href="/app/products/new">
+			<Button href={resolve('/app/products/new')}>
 				<Plus class="mr-2 h-4 w-4" />
 				新規作成
 			</Button>
@@ -78,7 +79,7 @@
 		</Tabs.Root>
 
 		<div class="relative w-full sm:w-64">
-			<Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+			<Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 			<Input placeholder="商品を検索..." class="pl-9" bind:value={searchQuery} />
 		</div>
 	</div>
@@ -87,14 +88,10 @@
 	<div class="mt-6">
 		{#if filteredProducts().length > 0}
 			<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-				{#each filteredProducts() as product}
+				{#each filteredProducts() as product (product.id)}
 					<Card.Root class="overflow-hidden">
 						{#if product.images[0]}
-							<img
-								src={product.images[0]}
-								alt={product.title}
-								class="h-40 w-full object-cover"
-							/>
+							<img src={product.images[0]} alt={product.title} class="h-40 w-full object-cover" />
 						{:else}
 							<div class="flex h-40 items-center justify-center bg-muted">
 								<Package class="h-12 w-12 text-muted-foreground" />
@@ -103,8 +100,10 @@
 						<Card.Header class="pb-2">
 							<div class="flex items-start justify-between">
 								<Card.Title class="line-clamp-1 text-base">{product.title}</Card.Title>
-								
-								<Badge variant={getStatusBadge(product.status).variant}>{getStatusBadge(product.status).label}</Badge>
+
+								<Badge variant={getStatusBadge(product.status).variant}
+									>{getStatusBadge(product.status).label}</Badge
+								>
 							</div>
 							<div class="flex gap-1">
 								<Badge variant="outline" class="text-xs">
@@ -124,11 +123,15 @@
 							</p>
 						</Card.Content>
 						<Card.Footer class="gap-2">
-							<Button variant="outline" size="sm" href="/app/products/{product.id}/edit">
+							<Button
+								variant="outline"
+								size="sm"
+								href={resolve(`/app/products/${product.id}/edit`)}
+							>
 								<Edit class="mr-1 h-4 w-4" />
 								編集
 							</Button>
-							<Button variant="ghost" size="sm" href="/p/{product.id}">
+							<Button variant="ghost" size="sm" href={resolve(`/p/${product.id}`)}>
 								<Eye class="mr-1 h-4 w-4" />
 								プレビュー
 							</Button>
@@ -147,7 +150,7 @@
 				>
 					{#snippet action()}
 						{#if !searchQuery}
-							<Button href="/app/products/new">
+							<Button href={resolve('/app/products/new')}>
 								<Plus class="mr-2 h-4 w-4" />
 								商品を作成
 							</Button>

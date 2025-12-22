@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
@@ -15,10 +16,10 @@
 		isLoading = true;
 
 		// モック: ログイン処理をシミュレート
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await new Promise((r) => setTimeout(r, 1000));
 
 		toast.success('ログインしました');
-		goto('/app/dashboard');
+		goto(resolve('/app/dashboard'));
 	}
 </script>
 
@@ -29,13 +30,13 @@
 <div class="flex min-h-screen items-center justify-center bg-muted/50 px-4">
 	<Card.Root class="w-full max-w-md">
 		<Card.Header class="space-y-1 text-center">
-			<div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+			<div
+				class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground"
+			>
 				<span class="text-xl font-bold">B</span>
 			</div>
 			<Card.Title class="text-2xl">ログイン</Card.Title>
-			<Card.Description>
-				起業家・事業者ネットワークで、顧客の相談を窓口一本化
-			</Card.Description>
+			<Card.Description>起業家・事業者ネットワークで、顧客の相談を窓口一本化</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			<form onsubmit={handleSubmit} class="space-y-4">
@@ -69,7 +70,7 @@
 			</form>
 		</Card.Content>
 		<Card.Footer class="flex flex-col gap-2 text-center text-sm">
-			<a href="/register" class="text-primary hover:underline">
+			<a href={resolve('/register')} class="text-primary hover:underline">
 				アカウントをお持ちでない方はこちら
 			</a>
 		</Card.Footer>

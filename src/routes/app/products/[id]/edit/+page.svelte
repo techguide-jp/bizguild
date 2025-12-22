@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { PageHeader } from '$lib/components/layout';
@@ -47,15 +48,15 @@
 		e.preventDefault();
 		isLoading = true;
 
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await new Promise((r) => setTimeout(r, 1000));
 
 		toast.success('商品を更新しました');
-		goto('/app/products');
+		goto(resolve('/app/products'));
 	}
 
 	async function handleSaveDraft() {
 		isLoading = true;
-		await new Promise((resolve) => setTimeout(resolve, 500));
+		await new Promise((r) => setTimeout(r, 500));
 		toast.success('下書きを保存しました');
 		isLoading = false;
 	}
@@ -64,9 +65,9 @@
 		if (!confirm('この商品を削除しますか？')) return;
 
 		isLoading = true;
-		await new Promise((resolve) => setTimeout(resolve, 500));
+		await new Promise((r) => setTimeout(r, 500));
 		toast.success('商品を削除しました');
-		goto('/app/products');
+		goto(resolve('/app/products'));
 	}
 </script>
 
@@ -81,7 +82,7 @@
 				<Save class="mr-2 h-4 w-4" />
 				下書き保存
 			</Button>
-			<Button variant="ghost" href="/p/{product.id}">
+			<Button variant="ghost" href={resolve(`/p/${product.id}`)}>
 				<Eye class="mr-2 h-4 w-4" />
 				プレビュー
 			</Button>
@@ -130,7 +131,7 @@
 							{typeOptions.find((o) => o.value === type)?.label}
 						</Select.Trigger>
 						<Select.Content>
-							{#each typeOptions as option}
+							{#each typeOptions as option (option.value)}
 								<Select.Item value={option.value}>{option.label}</Select.Item>
 							{/each}
 						</Select.Content>
@@ -204,7 +205,7 @@
 							{visibilityOptions.find((o) => o.value === providerVisibility)?.label}
 						</Select.Trigger>
 						<Select.Content>
-							{#each visibilityOptions as option}
+							{#each visibilityOptions as option (option.value)}
 								<Select.Item value={option.value}>{option.label}</Select.Item>
 							{/each}
 						</Select.Content>
@@ -228,9 +229,7 @@
 
 		<!-- Actions -->
 		<div class="flex justify-end gap-4">
-			<Button variant="outline" type="button" href="/app/products">
-				キャンセル
-			</Button>
+			<Button variant="outline" type="button" href={resolve('/app/products')}>キャンセル</Button>
 			<Button type="submit" disabled={isLoading}>
 				{#if isLoading}
 					保存中...

@@ -172,7 +172,7 @@
 			</div>
 
 			<!-- 流入元 -->
-			<Card.Root class="mt-6 shadow-soft">
+			<Card.Root class="shadow-soft mt-6">
 				<Card.Header>
 					<Card.Title class="flex items-center gap-2 text-base">
 						<Share2 class="h-4 w-4 text-primary" />
@@ -208,12 +208,12 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each productAnalytics as pa}
+								{#each productAnalytics as pa (pa.productId)}
 									<tr class="border-b last:border-0">
 										<td class="py-3">
 											<div class="font-medium">{pa.product.title}</div>
-											<div class="flex gap-1 mt-1">
-												{#each pa.product.tags.slice(0, 2) as tag}
+											<div class="mt-1 flex gap-1">
+												{#each pa.product.tags.slice(0, 2) as tag (tag)}
 													<Badge variant="outline" class="text-xs">{tag}</Badge>
 												{/each}
 											</div>
@@ -236,7 +236,7 @@
 			</Card.Root>
 
 			<!-- タグ分析 -->
-			<Card.Root class="mt-6 shadow-soft">
+			<Card.Root class="shadow-soft mt-6">
 				<Card.Header>
 					<Card.Title class="flex items-center gap-2 text-base">
 						<Tag class="h-4 w-4 text-primary" />
@@ -245,7 +245,7 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="space-y-3">
-						{#each tagAnalytics as ta}
+						{#each tagAnalytics as ta (ta.tag)}
 							{@const maxViews = Math.max(...tagAnalytics.map((t) => t.views))}
 							<div class="flex items-center gap-3">
 								<Badge variant="outline" class="w-28 justify-center">{ta.tag}</Badge>
@@ -267,9 +267,7 @@
 							</div>
 						{/each}
 					</div>
-					<p class="mt-4 text-xs text-muted-foreground">
-						※ 濃い部分は相談に繋がった割合
-					</p>
+					<p class="mt-4 text-xs text-muted-foreground">※ 濃い部分は相談に繋がった割合</p>
 				</Card.Content>
 			</Card.Root>
 		</Tabs.Content>
@@ -287,11 +285,7 @@
 					value={analyticsSummary.totalConversions.toString()}
 					icon={TrendingUp}
 				/>
-				<StatCard
-					title="転換率"
-					value={`${analyticsSummary.conversionRate}%`}
-					icon={TrendingUp}
-				/>
+				<StatCard title="転換率" value={`${analyticsSummary.conversionRate}%`} icon={TrendingUp} />
 				<StatCard
 					title="平均応答時間"
 					value={`${analyticsSummary.avgResponseTime}分`}
@@ -425,7 +419,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each referralAnalytics as ra}
+								{#each referralAnalytics as ra (ra.refCode)}
 									<tr class="border-b last:border-0">
 										<td class="py-3 font-medium">{ra.product.title}</td>
 										<td class="py-3 text-muted-foreground">{ra.referrer.name}</td>

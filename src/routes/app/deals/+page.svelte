@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { PageHeader, EmptyState } from '$lib/components/layout';
 	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
@@ -6,7 +7,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { deals, STAGE_LABELS, type DealStage } from '$lib/mock';
-	import { Briefcase, Plus, ExternalLink, Users, ListTodo } from 'lucide-svelte';
+	import { Briefcase, Plus, Users, ListTodo } from 'lucide-svelte';
 
 	let activeTab = $state('active');
 
@@ -80,8 +81,8 @@
 	<div class="mt-6">
 		{#if filteredDeals().length > 0}
 			<div class="space-y-4">
-				{#each filteredDeals() as deal}
-					<a href="/app/deals/{deal.id}" class="block">
+				{#each filteredDeals() as deal (deal.id)}
+					<a href={resolve(`/app/deals/${deal.id}`)} class="block">
 						<Card.Root class="transition-colors hover:bg-accent/50">
 							<Card.Header class="pb-2">
 								<div class="flex items-start justify-between">
@@ -102,7 +103,7 @@
 									<div class="flex items-center gap-2">
 										<Users class="h-4 w-4 text-muted-foreground" />
 										<div class="flex -space-x-2">
-											{#each deal.members.slice(0, 3) as member}
+											{#each deal.members.slice(0, 3) as member (member.user.id)}
 												<Avatar.Root class="h-6 w-6 border-2 border-background">
 													<Avatar.Image src={member.user.avatarUrl} alt={member.user.name} />
 													<Avatar.Fallback class="text-xs">
@@ -130,7 +131,7 @@
 									</div>
 
 									<!-- Role Badge -->
-									{#each deal.members.filter((m) => m.role === 'FRONT') as frontMember}
+									{#each deal.members.filter((m) => m.role === 'FRONT') as frontMember (frontMember.user.id)}
 										{#if frontMember.user.id === 'user-1'}
 											<Badge variant="outline" class="text-xs">窓口担当</Badge>
 										{/if}
@@ -152,9 +153,7 @@
 				>
 					{#snippet action()}
 						{#if activeTab === 'active'}
-							<Button href="/app/inquiries">
-								相談一覧を見る
-							</Button>
+							<Button href={resolve('/app/inquiries')}>相談一覧を見る</Button>
 						{/if}
 					{/snippet}
 				</EmptyState>

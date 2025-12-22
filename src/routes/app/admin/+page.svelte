@@ -12,16 +12,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { toast } from 'svelte-sonner';
 	import { pendingUsers, inviteCodes, orders, users } from '$lib/mock';
-	import {
-		Shield,
-		UserCheck,
-		UserX,
-		Ticket,
-		Plus,
-		Copy,
-		CreditCard,
-		Coins
-	} from 'lucide-svelte';
+	import { Shield, UserCheck, UserX, Plus, Copy, CreditCard, Coins } from 'lucide-svelte';
 
 	let activeTab = $state('screening');
 
@@ -67,11 +58,11 @@
 	}
 
 	// 審査
-	function approveUser(userId: string) {
+	function approveUser() {
 		toast.success('ユーザーを承認しました');
 	}
 
-	function rejectUser(userId: string) {
+	function rejectUser() {
 		toast.success('ユーザーを否認しました');
 	}
 </script>
@@ -102,7 +93,7 @@
 					<Card.Content>
 						{#if pendingUsers.length > 0}
 							<div class="space-y-4">
-								{#each pendingUsers as user}
+								{#each pendingUsers as user (user.id)}
 									<div class="flex items-center justify-between rounded-lg border p-4">
 										<div class="flex items-center gap-4">
 											<Avatar.Root class="h-12 w-12">
@@ -116,7 +107,7 @@
 													<p class="text-sm text-muted-foreground">{user.headline}</p>
 												{/if}
 												<div class="mt-1 flex flex-wrap gap-1">
-													{#each user.specialties as specialty}
+													{#each user.specialties as specialty (specialty)}
 														<Badge variant="outline" class="text-xs">{specialty}</Badge>
 													{/each}
 												</div>
@@ -161,11 +152,7 @@
 					<Card.Content>
 						<div class="flex gap-4">
 							<div class="flex-1">
-								<Input
-									placeholder="招待コード"
-									bind:value={newInviteCode}
-									readonly
-								/>
+								<Input placeholder="招待コード" bind:value={newInviteCode} readonly />
 							</div>
 							<Button variant="outline" onclick={generateInviteCode}>
 								<Plus class="mr-2 h-4 w-4" />
@@ -201,7 +188,7 @@
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>
-								{#each inviteCodes as code}
+								{#each inviteCodes as code (code.code)}
 									<Table.Row>
 										<Table.Cell class="font-mono">{code.code}</Table.Cell>
 										<Table.Cell class="text-sm text-muted-foreground">
@@ -211,10 +198,7 @@
 											{#if code.usedBy}
 												<div class="flex items-center gap-2">
 													<Avatar.Root class="h-6 w-6">
-														<Avatar.Image
-															src={code.usedBy.avatarUrl}
-															alt={code.usedBy.name}
-														/>
+														<Avatar.Image src={code.usedBy.avatarUrl} alt={code.usedBy.name} />
 														<Avatar.Fallback class="text-xs">
 															{code.usedBy.name.slice(0, 2)}
 														</Avatar.Fallback>
@@ -226,9 +210,7 @@
 											{/if}
 										</Table.Cell>
 										<Table.Cell class="text-sm text-muted-foreground">
-											{code.usedAt
-												? new Date(code.usedAt).toLocaleDateString('ja-JP')
-												: '-'}
+											{code.usedAt ? new Date(code.usedAt).toLocaleDateString('ja-JP') : '-'}
 										</Table.Cell>
 									</Table.Row>
 								{/each}
@@ -255,7 +237,7 @@
 										: '注文を選択'}
 								</Select.Trigger>
 								<Select.Content>
-									{#each pendingPaymentOrders as order}
+									{#each pendingPaymentOrders as order (order.id)}
 										<Select.Item value={order.id}>
 											{order.orderNo} - ¥{order.total.toLocaleString()}
 										</Select.Item>
@@ -303,12 +285,10 @@
 							<Label>ユーザー</Label>
 							<Select.Root type="single" bind:value={selectedUser}>
 								<Select.Trigger class="w-full">
-									{selectedUser
-										? users.find((u) => u.id === selectedUser)?.name
-										: 'ユーザーを選択'}
+									{selectedUser ? users.find((u) => u.id === selectedUser)?.name : 'ユーザーを選択'}
 								</Select.Trigger>
 								<Select.Content>
-									{#each users.filter((u) => u.status === 'ACTIVE') as user}
+									{#each users.filter((u) => u.status === 'ACTIVE') as user (user.id)}
 										<Select.Item value={user.id}>{user.name}</Select.Item>
 									{/each}
 								</Select.Content>

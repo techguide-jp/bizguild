@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
@@ -47,7 +48,7 @@
 		isLoading = true;
 
 		// モック: 審査申請をシミュレート
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await new Promise((r) => setTimeout(r, 1000));
 
 		isSubmitted = true;
 		toast.success('審査を申請しました');
@@ -62,7 +63,9 @@
 	{#if isSubmitted}
 		<Card.Root class="w-full max-w-md">
 			<Card.Header class="space-y-1 text-center">
-				<div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
+				<div
+					class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100"
+				>
 					<Clock class="h-8 w-8 text-amber-600" />
 				</div>
 				<Card.Title class="text-2xl">審査中です</Card.Title>
@@ -77,21 +80,19 @@
 				</p>
 			</Card.Content>
 			<Card.Footer class="justify-center">
-				<a href="/" class="text-sm text-primary hover:underline">
-					トップページに戻る
-				</a>
+				<a href={resolve('/')} class="text-sm text-primary hover:underline"> トップページに戻る </a>
 			</Card.Footer>
 		</Card.Root>
 	{:else}
 		<Card.Root class="w-full max-w-lg">
 			<Card.Header class="space-y-1 text-center">
-				<div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+				<div
+					class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground"
+				>
 					<span class="text-xl font-bold">B</span>
 				</div>
 				<Card.Title class="text-2xl">審査フォーム</Card.Title>
-				<Card.Description>
-					あなたの事業について教えてください
-				</Card.Description>
+				<Card.Description>あなたの事業について教えてください</Card.Description>
 			</Card.Header>
 			<Card.Content>
 				<form onsubmit={handleSubmit} class="space-y-6">
@@ -119,7 +120,7 @@
 					<div class="space-y-3">
 						<Label>得意領域 *</Label>
 						<div class="grid grid-cols-2 gap-2">
-							{#each specialtyOptions as specialty}
+							{#each specialtyOptions as specialty (specialty)}
 								<label
 									class="flex cursor-pointer items-center gap-2 rounded-lg border p-3 transition-colors hover:bg-accent"
 								>

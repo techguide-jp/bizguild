@@ -18,7 +18,7 @@
 
 	// ページ遷移時にサイドバーを閉じる
 	$effect(() => {
-		$page.url.pathname;
+		void $page.url.pathname; // ページ遷移を監視
 		sidebarOpen = false;
 	});
 </script>
@@ -41,13 +41,17 @@
 	<!-- Main Content -->
 	<div class="flex flex-1 flex-col lg:pl-64">
 		<!-- Mobile Header -->
-		<header class="sticky top-0 z-20 flex h-16 items-center gap-4 border-b bg-background px-4 lg:hidden">
+		<header
+			class="sticky top-0 z-20 flex h-16 items-center gap-4 border-b bg-background px-4 lg:hidden"
+		>
 			<Button variant="ghost" size="icon" onclick={() => (sidebarOpen = true)}>
 				<Menu class="h-5 w-5" />
 				<span class="sr-only">メニューを開く</span>
 			</Button>
 			<div class="flex items-center gap-2">
-				<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+				<div
+					class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"
+				>
 					<span class="text-sm font-bold">B</span>
 				</div>
 				<span class="text-lg font-semibold">BizGuild</span>

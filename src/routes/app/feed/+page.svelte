@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import EmptyState from '$lib/components/layout/EmptyState.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -7,7 +8,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { followingFeed, PRODUCT_TYPE_LABELS } from '$lib/mock';
 	import type { FeedItem } from '$lib/mock/types';
-	import { Rss, Package, Heart, RefreshCw, ExternalLink, Users } from 'lucide-svelte';
+	import { Rss, Package, Heart, RefreshCw, ExternalLink } from 'lucide-svelte';
 
 	// フィードタイプのラベルとアイコン
 	function getFeedTypeInfo(type: FeedItem['type']) {
@@ -56,7 +57,7 @@
 		/>
 	{:else}
 		<div class="space-y-4">
-			{#each followingFeed as item}
+			{#each followingFeed as item (item.id)}
 				{@const typeInfo = getFeedTypeInfo(item.type)}
 				<Card.Root class="transition-shadow hover:shadow-md">
 					<Card.Content class="p-4">
@@ -68,7 +69,7 @@
 							</Avatar.Root>
 							<div class="flex-1">
 								<div class="flex items-center gap-2">
-									<a href={`/u/${item.user.slug}`} class="font-medium hover:underline">
+									<a href={resolve(`/u/${item.user.slug}`)} class="font-medium hover:underline">
 										{item.user.name}
 									</a>
 									<Badge variant="outline" class="gap-1 {typeInfo.color}">
@@ -84,7 +85,7 @@
 						{#if item.product}
 							<div class="mt-4">
 								<a
-									href={`/p/${item.product.id}`}
+									href={resolve(`/p/${item.product.id}`)}
 									class="flex gap-4 rounded-lg border p-3 transition-colors hover:bg-accent"
 								>
 									{#if item.product.images[0]}
@@ -94,9 +95,7 @@
 											class="h-20 w-20 rounded object-cover"
 										/>
 									{:else}
-										<div
-											class="flex h-20 w-20 items-center justify-center rounded bg-muted"
-										>
+										<div class="flex h-20 w-20 items-center justify-center rounded bg-muted">
 											<Package class="h-8 w-8 text-muted-foreground" />
 										</div>
 									{/if}
@@ -121,7 +120,7 @@
 						{:else if item.type === 'ROOM_UPDATE'}
 							<div class="mt-4">
 								<a
-									href={`/u/${item.user.slug}/room`}
+									href={resolve(`/u/${item.user.slug}/room`)}
 									class="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
 								>
 									<div class="flex h-12 w-12 items-center justify-center rounded-full bg-pink-100">

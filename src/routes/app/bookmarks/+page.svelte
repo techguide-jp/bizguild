@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import EmptyState from '$lib/components/layout/EmptyState.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -80,9 +81,11 @@
 		</div>
 
 		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-			{#each sortedProducts() as product}
-				<a href={`/p/${product.id}`} class="group block">
-					<Card.Root class="h-full overflow-hidden shadow-soft transition-all group-hover:shadow-soft-lg group-hover:-translate-y-1">
+			{#each sortedProducts() as product (product.id)}
+				<a href={resolve(`/p/${product.id}`)} class="group block">
+					<Card.Root
+						class="shadow-soft group-hover:shadow-soft-lg h-full overflow-hidden transition-all group-hover:-translate-y-1"
+					>
 						{#if product.images[0]}
 							<img src={product.images[0]} alt={product.title} class="h-40 w-full object-cover" />
 						{:else}
@@ -93,10 +96,16 @@
 						<Card.Header class="pb-2">
 							<div class="flex items-start justify-between">
 								<div>
-									<Badge variant="secondary" class="mb-2">{PRODUCT_TYPE_LABELS[product.type]}</Badge>
+									<Badge variant="secondary" class="mb-2">{PRODUCT_TYPE_LABELS[product.type]}</Badge
+									>
 									<Card.Title class="text-base">{product.title}</Card.Title>
 								</div>
-								<Button variant="ghost" size="icon" class="h-8 w-8 text-amber-500" onclick={handleRemoveBookmark}>
+								<Button
+									variant="ghost"
+									size="icon"
+									class="h-8 w-8 text-amber-500"
+									onclick={handleRemoveBookmark}
+								>
 									<BookmarkMinus class="h-4 w-4" />
 								</Button>
 							</div>
@@ -109,7 +118,8 @@
 							<div class="flex items-center gap-2 rounded p-1">
 								<Avatar.Root class="h-6 w-6">
 									<Avatar.Image src={product.owner.avatarUrl} alt={product.owner.name} />
-									<Avatar.Fallback class="text-xs">{product.owner.name.slice(0, 2)}</Avatar.Fallback>
+									<Avatar.Fallback class="text-xs">{product.owner.name.slice(0, 2)}</Avatar.Fallback
+									>
 								</Avatar.Root>
 								<span class="text-sm text-muted-foreground">{product.owner.name}</span>
 							</div>

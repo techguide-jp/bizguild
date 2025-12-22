@@ -6,7 +6,6 @@
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { toast } from 'svelte-sonner';
@@ -101,7 +100,7 @@
 		</Card.Header>
 		<Card.Content>
 			<div class="flex flex-wrap gap-2">
-				{#each stages as stage}
+				{#each stages as stage (stage)}
 					{@const status = getStageStatus(stage)}
 					<button
 						class="flex items-center gap-2 rounded-full px-3 py-1.5 text-sm transition-colors
@@ -151,10 +150,8 @@
 						<!-- Tasks Tab -->
 						<Tabs.Content value="tasks">
 							<div class="space-y-3">
-								{#each deal.tasks as task}
-									<div
-										class="flex items-center justify-between rounded-lg border p-3"
-									>
+								{#each deal.tasks as task (task.id)}
+									<div class="flex items-center justify-between rounded-lg border p-3">
 										<div class="flex items-center gap-3">
 											<button
 												class="flex-shrink-0"
@@ -170,9 +167,7 @@
 											</button>
 											<div>
 												<span
-													class={task.status === 'DONE'
-														? 'text-muted-foreground line-through'
-														: ''}
+													class={task.status === 'DONE' ? 'text-muted-foreground line-through' : ''}
 												>
 													{task.title}
 												</span>
@@ -233,13 +228,10 @@
 									<Badge variant="outline">顧客公開</Badge>
 								</div>
 
-								{#each deal.comments as comment}
+								{#each deal.comments as comment (comment.id)}
 									<div class="flex gap-3">
 										<Avatar.Root class="h-8 w-8">
-											<Avatar.Image
-												src={comment.author.avatarUrl}
-												alt={comment.author.name}
-											/>
+											<Avatar.Image src={comment.author.avatarUrl} alt={comment.author.name} />
 											<Avatar.Fallback class="text-xs">
 												{comment.author.name.slice(0, 2)}
 											</Avatar.Fallback>
@@ -264,11 +256,7 @@
 
 								<!-- Add Comment -->
 								<div class="mt-4 space-y-2">
-									<Textarea
-										placeholder="コメントを入力..."
-										bind:value={newComment}
-										rows={3}
-									/>
+									<Textarea placeholder="コメントを入力..." bind:value={newComment} rows={3} />
 									<div class="flex items-center justify-between">
 										<label class="flex items-center gap-2">
 											<Checkbox bind:checked={newCommentIsClientVisible} />
@@ -316,7 +304,7 @@
 					</Card.Title>
 				</Card.Header>
 				<Card.Content class="space-y-3">
-					{#each deal.members as member}
+					{#each deal.members as member (member.user.id)}
 						<div class="flex items-center justify-between">
 							<div class="flex items-center gap-3">
 								<Avatar.Root class="h-8 w-8">

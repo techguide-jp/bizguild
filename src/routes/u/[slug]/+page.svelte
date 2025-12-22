@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -40,16 +41,13 @@
 						<p class="mt-1 text-muted-foreground">{user.headline}</p>
 					{/if}
 					<div class="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
-						{#each user.specialties as specialty}
+						{#each user.specialties as specialty (specialty)}
 							<Badge variant="secondary">{specialty}</Badge>
 						{/each}
 					</div>
 				</div>
 				<div class="flex gap-2">
-					<InquiryDialog
-						targetUser={user}
-						buttonStyle="background-color: var(--theme-primary)"
-					/>
+					<InquiryDialog targetUser={user} buttonStyle="background-color: var(--theme-primary)" />
 					<Button variant="outline" href={`/u/${slug}/room`}>
 						<Heart class="mr-2 h-4 w-4" />
 						おすすめ
@@ -65,15 +63,13 @@
 
 		{#if userProducts.length > 0}
 			<div class="grid gap-6 sm:grid-cols-2">
-				{#each userProducts as product}
-					<a href={`/p/${product.id}`} class="group block">
-						<Card.Root class="h-full overflow-hidden shadow-soft transition-all group-hover:shadow-soft-lg group-hover:-translate-y-1">
+				{#each userProducts as product (product.id)}
+					<a href={resolve(`/p/${product.id}`)} class="group block">
+						<Card.Root
+							class="shadow-soft group-hover:shadow-soft-lg h-full overflow-hidden transition-all group-hover:-translate-y-1"
+						>
 							{#if product.images[0]}
-								<img
-									src={product.images[0]}
-									alt={product.title}
-									class="h-40 w-full object-cover"
-								/>
+								<img src={product.images[0]} alt={product.title} class="h-40 w-full object-cover" />
 							{/if}
 							<Card.Header>
 								<Card.Title class="text-lg">{product.title}</Card.Title>
@@ -83,7 +79,7 @@
 							</Card.Header>
 							<Card.Content>
 								<div class="flex flex-wrap gap-1">
-									{#each product.tags.slice(0, 3) as tag}
+									{#each product.tags.slice(0, 3) as tag (tag)}
 										<Badge variant="outline" class="text-xs">{tag}</Badge>
 									{/each}
 								</div>
