@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Badge } from '$lib/components/ui/badge';
-	import { users, products, PRODUCT_TYPE_LABELS, VISIBILITY_LABELS } from '$lib/mock';
+	import { users, products, PRODUCT_TYPE_LABELS } from '$lib/mock';
+	import { parseDescription } from '$lib/utils/description';
 	import InquiryDialog from '$lib/components/InquiryDialog.svelte';
-	import { Coins, ExternalLink } from 'lucide-svelte';
+	import { ExternalLink } from 'lucide-svelte';
 
 	const refCode = $page.params.refCode ?? '';
 
@@ -33,13 +35,7 @@
 		return '要相談';
 	}
 
-	function formatDescription(md: string): string {
-		return md
-			.replace(/^## (.+)$/gm, '<h2 class="text-lg font-semibold mt-6 mb-2">$1</h2>')
-			.replace(/^- (.+)$/gm, '<li class="ml-4">$1</li>')
-			.replace(/\n\n/g, '</p><p class="mt-3">')
-			.replace(/\n/g, '<br>');
-	}
+	const descriptionBlocks = product.descriptionMd ? parseDescription(product.descriptionMd) : [];
 </script>
 
 <svelte:head>
@@ -76,7 +72,7 @@
 					<Card.Header>
 						<div class="flex flex-wrap items-center gap-2">
 							<Badge>{PRODUCT_TYPE_LABELS[product.type]}</Badge>
-							{#each product.tags as tag}
+							{#each product.tags as tag (tag)}
 								<Badge variant="outline">{tag}</Badge>
 							{/each}
 						</div>
@@ -87,8 +83,24 @@
 					</Card.Header>
 					<Card.Content>
 						{#if product.descriptionMd}
-							<div class="prose prose-sm max-w-none">
-								{@html formatDescription(product.descriptionMd)}
+							<div class="space-y-3 text-sm leading-relaxed text-foreground/90">
+								{#each descriptionBlocks as block, blockIndex (blockIndex)}
+									{#if block.type === 'heading'}
+										<h2 class="text-lg font-semibold text-foreground">{block.text}</h2>
+									{:else if block.type === 'list'}
+										<ul class="list-disc space-y-1 pl-5">
+											{#each block.items as item, itemIndex (itemIndex)}
+												<li>{item}</li>
+											{/each}
+										</ul>
+									{:else}
+										<p>
+											{#each block.lines as line, lineIndex (lineIndex)}
+												{line}{#if lineIndex < block.lines.length - 1}<br />{/if}
+											{/each}
+										</p>
+									{/if}
+								{/each}
 							</div>
 						{/if}
 					</Card.Content>
@@ -129,7 +141,7 @@
 						<Card.Content>
 							{#if product.providerVisibility === 'FULL'}
 								<a
-									href={`/u/${product.owner.slug}`}
+									href={resolve(`/u/${product.owner.slug}`)}
 									class="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-accent"
 								>
 									<Avatar.Root class="h-12 w-12">
@@ -159,7 +171,7 @@
 					</Card.Header>
 					<Card.Content>
 						<a
-							href={`/u/${frontUser.slug}`}
+							href={resolve(`/u/${frontUser.slug}`)}
 							class="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-accent"
 						>
 							<Avatar.Root class="h-12 w-12">
