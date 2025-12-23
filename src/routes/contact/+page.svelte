@@ -185,7 +185,7 @@
 
 					<p class="mt-6 text-center text-sm text-muted-foreground">
 						メンバーとして参加したい方は
-						<a href={resolve('/waitlist')} class="text-primary underline-offset-4 hover:underline">
+						<a href={resolve('/')} class="text-primary underline-offset-4 hover:underline">
 							こちら
 						</a>
 						からご登録ください。

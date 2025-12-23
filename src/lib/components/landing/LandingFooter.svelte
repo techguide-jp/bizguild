@@ -8,14 +8,14 @@
 		<div class="grid gap-8 md:grid-cols-4">
 			<!-- ブランド -->
 			<div class="md:col-span-2">
-				<div class="flex items-center gap-2">
+				<a href={resolve('/')} class="flex items-center gap-2">
 					<div
 						class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"
 					>
 						<span class="text-sm font-bold">B</span>
 					</div>
 					<span class="text-lg font-semibold">BizGuild</span>
-				</div>
+				</a>
 				<p class="mt-4 text-sm text-muted-foreground">
 					あなたのネットワークを、ビジネスが生まれる場所に。<br />
 					コミュニティ運営者のためのプラットフォーム。
@@ -35,8 +35,13 @@
 						>
 					</li>
 					<li>
-						<a href={resolve('/waitlist')} class="transition-colors hover:text-foreground"
-							>メンバーとして参加したい方</a
+						<a href={resolve('/')} class="transition-colors hover:text-foreground"
+							>メンバーとして参加したい人</a
+						>
+					</li>
+					<li>
+						<a href={resolve('/community')} class="transition-colors hover:text-foreground"
+							>コミュニティ運営者向け</a
 						>
 					</li>
 				</ul>
