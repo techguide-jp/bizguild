@@ -1,4 +1,7 @@
 <script lang="ts">
+	export let data: { pricingUnlocked: boolean };
+	export let form: { pricingError?: string } | undefined;
+
 	import {
 		LandingHeader,
 		HeroSection,
@@ -32,7 +35,7 @@
 		<UseCaseSection />
 		<FeatureSection />
 		<ComparisonSection />
-		<PricingSection />
+		<PricingSection isUnlocked={data.pricingUnlocked} pricingError={form?.pricingError} />
 		<StepsSection />
 		<FaqSection />
 		<CtaSection />

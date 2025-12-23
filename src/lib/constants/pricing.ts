@@ -116,10 +116,15 @@ export const COMPETITOR_COMMISSION_RATES = {
  */
 export function formatPriceYen(amount: number): string {
 	if (amount === 0) return '0円';
-	if (amount >= 10000) {
-		return `${amount / 10000}万円`;
+	if (Math.abs(amount) >= 10000) {
+		const man = amount / 10000;
+		let rounded = Math.round(man * 10) / 10;
+		if (Object.is(rounded, -0)) rounded = 0;
+		const formatted =
+			Math.abs(rounded % 1) < Number.EPSILON ? rounded.toFixed(0) : rounded.toFixed(1);
+		return `${formatted}万円`;
 	}
-	return `${amount.toLocaleString()}円`;
+	return `${Math.round(amount).toLocaleString()}円`;
 }
 
 /**
