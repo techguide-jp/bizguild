@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
+	import type { RouteId } from '$app/types';
 	import { cn } from '$lib/utils';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Switch } from '$lib/components/ui/switch';
@@ -27,6 +28,12 @@
 		BarChart3
 	} from 'lucide-svelte';
 
+	type NavItem = {
+		href: RouteId;
+		label: string;
+		icon: typeof LayoutDashboard;
+	};
+
 	interface Props {
 		class?: string;
 		onClose?: () => void;
@@ -43,7 +50,7 @@
 		{ href: '/app/inquiries', label: '相談', icon: MessageSquare },
 		{ href: '/app/deals', label: '案件', icon: Briefcase },
 		{ href: '/app/orders', label: '注文', icon: ShoppingCart }
-	];
+	] satisfies readonly NavItem[];
 
 	// 探索モードのナビ
 	const seekerNavItems = [
@@ -53,17 +60,21 @@
 		{ href: '/app/bookmarks', label: 'ブックマーク', icon: Bookmark },
 		{ href: '/app/feed', label: 'フィード', icon: Rss },
 		{ href: '/app/orders', label: '購入履歴', icon: ShoppingCart }
-	];
+	] satisfies readonly NavItem[];
 
 	// 共通ナビ
-	const commonNavItems = [{ href: '/app/points', label: 'ポイント', icon: Coins }];
+	const commonNavItems = [
+		{ href: '/app/points', label: 'ポイント', icon: Coins }
+	] satisfies readonly NavItem[];
 
 	const settingsItems = [
 		{ href: '/app/settings/profile', label: 'プロフィール', icon: User },
 		{ href: '/app/settings/theme', label: 'テーマ設定', icon: Palette }
-	];
+	] satisfies readonly NavItem[];
 
-	const adminItems = [{ href: '/app/admin', label: '管理者', icon: Shield }];
+	const adminItems = [
+		{ href: '/app/admin', label: '管理者', icon: Shield }
+	] satisfies readonly NavItem[];
 
 	function isActive(href: string): boolean {
 		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');

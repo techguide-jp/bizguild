@@ -30,7 +30,9 @@
 		}
 	}
 
-	async function convertToDeal() {
+	async function convertToDeal(inquiryId: string) {
+		// TODO: inquiryIdを使って案件化APIを呼び、相談ステータス更新と遷移先案件IDを反映する
+		void inquiryId;
 		toast.success('案件を作成しました');
 		goto(resolve('/app/deals'));
 	}

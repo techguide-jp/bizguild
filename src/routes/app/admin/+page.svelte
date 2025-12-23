@@ -58,11 +58,15 @@
 	}
 
 	// 審査
-	function approveUser() {
+	function approveUser(userId: string) {
+		// TODO: userIdを使って審査承認APIを呼び、対象ユーザーの状態更新と通知を行う
+		void userId;
 		toast.success('ユーザーを承認しました');
 	}
 
-	function rejectUser() {
+	function rejectUser(userId: string) {
+		// TODO: userIdを使って審査否認APIを呼び、対象ユーザーの状態更新と通知を行う
+		void userId;
 		toast.success('ユーザーを否認しました');
 	}
 </script>

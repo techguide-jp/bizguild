@@ -17,13 +17,15 @@
 		data,
 		height = 200,
 		color = 'var(--primary)',
-		showValues: _showValues = true,
+		showValues = true,
 		yAxisLabel,
 		xAxisLabel
 	}: Props = $props();
 
-	// showValues is currently unused but kept for future use
-	void _showValues;
+	$effect(() => {
+		// TODO: showValuesの表示切り替えを将来対応する
+		void showValues;
+	});
 
 	// Y軸の範囲を計算
 	const yScale = $derived(() => {

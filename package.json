@@ -11,10 +11,23 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint .",
+		"lint": "pnpm lint:format && pnpm lint:code",
+		"lint:format": "prettier --check .",
+		"lint:code": "eslint . --cache",
+		"lint:types": "pnpm check",
+		"lint:all": "pnpm format && pnpm lint:code && pnpm lint:types",
+		"lint:staged": "lint-staged",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test"
+	},
+	"lint-staged": {
+		"*.{js,ts,svelte}": [
+			"eslint --fix"
+		],
+		"*.{js,ts,svelte,css,md,json}": [
+			"prettier --write"
+		]
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
@@ -35,6 +48,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.13.1",
 		"globals": "^16.5.0",
+		"lint-staged": "^16.1.0",
 		"playwright": "^1.57.0",
 		"prettier": "^3.7.4",
 		"prettier-plugin-svelte": "^3.4.0",
