@@ -116,6 +116,7 @@ export const products: Product[] = [
 		images: ['https://placehold.co/800x400/2563eb/white?text=SEO+Consulting'],
 		providerVisibility: 'FULL',
 		pointPolicy: { mode: 'PERCENT', value: 10 },
+		// 紹介者手数料: デフォルト値を使用（未設定）
 		owner: users[0],
 		createdAt: '2024-01-15T10:00:00Z'
 	},
@@ -143,6 +144,9 @@ export const products: Product[] = [
 		images: ['https://placehold.co/800x400/7c3aed/white?text=Logo+Design'],
 		providerVisibility: 'FULL',
 		pointPolicy: { mode: 'FIXED', value: 5000 },
+		// 紹介者手数料: カスタム設定（紹介のみ10%、クロージング代行15%）
+		referrerCommissionRate: 0.1,
+		referrerCommissionRateClose: 0.15,
 		owner: users[1],
 		createdAt: '2024-02-01T10:00:00Z'
 	},
@@ -171,6 +175,8 @@ export const products: Product[] = [
 		tags: ['開発', 'Webアプリ', 'システム'],
 		images: ['https://placehold.co/800x400/059669/white?text=Web+Development'],
 		providerVisibility: 'PARTIAL',
+		// 紹介者手数料: カスタム設定（紹介のみ5%）
+		referrerCommissionRate: 0.05,
 		owner: users[2],
 		createdAt: '2024-02-15T10:00:00Z'
 	},

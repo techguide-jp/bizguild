@@ -1,7 +1,15 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Users, ClipboardCheck, BarChart3, Package, Share2, MessageSquare } from 'lucide-svelte';
+	import {
+		Users,
+		ClipboardCheck,
+		BarChart3,
+		Package,
+		Share2,
+		MessageSquare,
+		Settings2
+	} from 'lucide-svelte';
 </script>
 
 <section id="features" class="bg-muted/30 py-20">
@@ -76,6 +84,20 @@
 					<Card.Content>
 						<p class="text-sm text-muted-foreground">
 							自分のサービスを登録して、他のメンバーに見つけてもらえる。専門分野や強みをアピール。
+						</p>
+					</Card.Content>
+				</Card.Root>
+
+				<Card.Root class="shadow-soft border-none bg-background transition-shadow hover:shadow-md">
+					<Card.Header>
+						<div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+							<Settings2 class="h-6 w-6 text-primary" />
+						</div>
+						<Card.Title class="text-lg">紹介手数料の自由設定</Card.Title>
+					</Card.Header>
+					<Card.Content>
+						<p class="text-sm text-muted-foreground">
+							「紹介のみ」「クロージング代行」の2パターンで手数料率を設定可能。紹介者の貢献度に応じたインセンティブ設計ができます。
 						</p>
 					</Card.Content>
 				</Card.Root>

@@ -7,23 +7,29 @@
 // BizGuild プラン料金
 // ============================================
 
+/**
+ * 最低契約期間（月数）
+ * 全プラン共通
+ */
+export const MIN_CONTRACT_MONTHS = 12;
+
 export const PLANS = {
 	fixed: {
 		name: '固定費プラン',
-		initialFee: 600000, // 60万円
+		initialFee: 800000, // 80万円
 		monthlyFee: 10000, // 1万円
-		monthlyFeeStartMonth: 6, // リリース後6ヶ月目より
-		ownerCommissionRate: 0.035, // 3.5%
-		bizguildCommissionRate: 0.005, // 0.5%
+		monthlyFeeStartMonth: 1, // リリース月より
+		ownerCommissionRate: 0.06, // 6%
+		bizguildCommissionRate: 0.02, // 2%
 		referrerCommissionRate: 0.07 // 7%
 	},
 	revenue: {
-		name: 'レベニューシェアプラン',
-		initialFee: 0,
-		monthlyFee: 10000, // 1万円
+		name: 'バランスプラン',
+		initialFee: 400000, // 40万円
+		monthlyFee: 20000, // 2万円
 		monthlyFeeStartMonth: 1, // リリース月より
-		ownerCommissionRate: 0.01, // 1%
-		bizguildCommissionRate: 0.03, // 3%
+		ownerCommissionRate: 0.04, // 4%
+		bizguildCommissionRate: 0.04, // 4%
 		referrerCommissionRate: 0.07 // 7%
 	},
 	monthly: {
@@ -32,8 +38,50 @@ export const PLANS = {
 		monthlyFee: 30000, // 3万円
 		monthlyFeeStartMonth: 1, // リリース月より
 		ownerCommissionRate: 0.02, // 2%
-		bizguildCommissionRate: 0.02, // 2%
+		bizguildCommissionRate: 0.06, // 6%
 		referrerCommissionRate: 0.07 // 7%
+	}
+} as const;
+
+// ============================================
+// 月額課金（コミュニティ参加費）の分配率
+// ============================================
+
+/**
+ * メンバーからの月額課金（コミュニティ参加費）の分配率
+ * 全プラン共通で一律適用
+ */
+export const SUBSCRIPTION_COMMISSION = {
+	ownerRate: 0.6, // 60% - 運営者の取り分
+	bizguildRate: 0.4 // 40% - BizGuildの取り分
+} as const;
+
+// ============================================
+// 紹介者手数料のデフォルト値
+// ============================================
+
+/**
+ * 紹介者手数料のデフォルト値
+ * 商品ごとに設定可能。未設定の場合はこの値が適用される。
+ */
+export const DEFAULT_REFERRER_COMMISSION = {
+	referralOnly: 0.07, // 7% - 紹介のみの場合
+	closingSupport: 0.1 // 10% - クロージング代行の場合
+} as const;
+
+// ============================================
+// プラットフォーム手数料（運営者分 + BizGuild分）
+// ============================================
+
+/**
+ * プラットフォーム手数料（紹介者手数料を除く）
+ * 運営者分 + BizGuild分の合計。プランにより異なるが、ここでは固定費プランの値を代表値として使用。
+ */
+export const PLATFORM_COMMISSION = {
+	owner: PLANS.fixed.ownerCommissionRate, // 3.5%
+	bizguild: PLANS.fixed.bizguildCommissionRate, // 0.5%
+	get total() {
+		return this.owner + this.bizguild; // 4%
 	}
 } as const;
 
@@ -41,18 +89,29 @@ export const PLANS = {
 // 手数料率（紹介のみ・クロージング代行）
 // ============================================
 
+/**
+ * 総手数料率を計算
+ * @param referrerRate 紹介者手数料率
+ * @returns 総手数料率（紹介者分 + 運営者分 + BizGuild分）
+ */
+export function calcTotalCommissionRate(referrerRate: number): number {
+	return referrerRate + PLATFORM_COMMISSION.owner + PLATFORM_COMMISSION.bizguild;
+}
+
 export const COMMISSION_RATES = {
 	// 紹介のみ（やりとりは提供者本人）
 	referralOnly: {
-		total: 0.1, // 10%
-		referrer: 0.07 // 7%
-		// owner と bizguild はプランによって異なる
+		referrer: DEFAULT_REFERRER_COMMISSION.referralOnly, // デフォルト7%
+		get total() {
+			return calcTotalCommissionRate(this.referrer);
+		}
 	},
 	// クロージングまで代行
 	closingSupport: {
-		total: 0.13, // 13%
-		referrer: 0.1 // 10%
-		// owner と bizguild はプランによって異なる
+		referrer: DEFAULT_REFERRER_COMMISSION.closingSupport, // デフォルト10%
+		get total() {
+			return calcTotalCommissionRate(this.referrer);
+		}
 	}
 } as const;
 

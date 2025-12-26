@@ -11,6 +11,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { toast } from 'svelte-sonner';
 	import { Package, Save } from 'lucide-svelte';
+	import { DEFAULT_REFERRER_COMMISSION } from '$lib/constants/pricing';
 
 	let title = $state('');
 	let summary = $state('');
@@ -24,6 +25,12 @@
 	let pointMode = $state('PERCENT');
 	let pointValue = $state('');
 	let allowPointUse = $state(true);
+	let referrerCommissionRate = $state(
+		String(Math.round(DEFAULT_REFERRER_COMMISSION.referralOnly * 100))
+	);
+	let referrerCommissionRateClose = $state(
+		String(Math.round(DEFAULT_REFERRER_COMMISSION.closingSupport * 100))
+	);
 	let isLoading = $state(false);
 
 	const typeOptions = [
@@ -198,6 +205,49 @@
 					<Checkbox bind:checked={allowPointUse} />
 					<span class="text-sm">購入時のポイント利用を許可する</span>
 				</label>
+			</Card.Content>
+		</Card.Root>
+
+		<!-- 紹介手数料設定 -->
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>紹介手数料設定</Card.Title>
+				<Card.Description>
+					紹介成約時に紹介者へ支払う手数料率を設定します（成約金額に対する%）
+				</Card.Description>
+			</Card.Header>
+			<Card.Content class="space-y-4">
+				<div class="grid gap-4 sm:grid-cols-2">
+					<div class="space-y-2">
+						<Label for="referrerCommissionRate">紹介のみ（%）</Label>
+						<Input
+							id="referrerCommissionRate"
+							type="number"
+							min="0"
+							max="100"
+							step="0.1"
+							placeholder="例: 7"
+							bind:value={referrerCommissionRate}
+						/>
+						<p class="text-xs text-muted-foreground">紹介者がクライアントを紹介するのみの場合</p>
+					</div>
+					<div class="space-y-2">
+						<Label for="referrerCommissionRateClose">クロージング代行時（%）</Label>
+						<Input
+							id="referrerCommissionRateClose"
+							type="number"
+							min="0"
+							max="100"
+							step="0.1"
+							placeholder="例: 10"
+							bind:value={referrerCommissionRateClose}
+						/>
+						<p class="text-xs text-muted-foreground">紹介者がクロージングまで代行する場合</p>
+					</div>
+				</div>
+				<p class="text-sm text-muted-foreground">
+					※ 紹介者手数料の他に、運営者分・BizGuild分の手数料が別途発生します
+				</p>
 			</Card.Content>
 		</Card.Root>
 

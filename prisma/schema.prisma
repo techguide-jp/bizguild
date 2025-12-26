@@ -343,6 +343,10 @@ model Product {
   acceptPoints              Boolean            @default(true)
   maxPointRedeemRate        Float? // nullなら全体既定値（POINTS_MAX_REDEEM_RATE_DEFAULT）
 
+  // 紹介者手数料率（null の場合はデフォルト値を使用）
+  referrerCommissionRate      Float? // 紹介のみの場合（デフォルト: 7%）
+  referrerCommissionRateClose Float? // クロージング代行の場合（デフォルト: 10%）
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? // softDelete

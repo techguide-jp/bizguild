@@ -3,7 +3,7 @@
 	import { Check, X, TrendingDown } from 'lucide-svelte';
 	import {
 		COMPETITOR_COMMISSION_RATES,
-		COMMISSION_RATES,
+		PLATFORM_COMMISSION,
 		formatPercentInt,
 		formatPriceYen
 	} from '$lib/constants/pricing';
@@ -119,13 +119,11 @@
 							<td class="px-4 py-3 font-bold text-primary">BizGuild</td>
 							<td class="px-4 py-3 text-center">
 								<span class="rounded-full bg-primary px-3 py-1 font-bold text-primary-foreground">
-									{formatPercentInt(COMMISSION_RATES.referralOnly.total)}
+									{formatPercentInt(PLATFORM_COMMISSION.total)}〜
 								</span>
 							</td>
 							<td class="px-4 py-3 text-center font-medium text-primary">
-								成約時のみ。うち{formatPercentInt(
-									COMMISSION_RATES.referralOnly.referrer
-								)}は紹介者へ還元
+								成約時のみ。紹介者への還元率は提供者が自由に設定可能
 							</td>
 						</tr>
 					</tbody>
@@ -156,7 +154,9 @@
 							<Check class="mt-0.5 h-5 w-5 shrink-0 text-primary" />
 							<div>
 								<p class="font-medium text-primary">BizGuild</p>
-								<p class="text-sm text-muted-foreground">成約時のみ10%の手数料</p>
+								<p class="text-sm text-muted-foreground">
+									成約時のみ{formatPercentInt(PLATFORM_COMMISSION.total)}〜の手数料
+								</p>
 							</div>
 						</div>
 					</div>
@@ -192,21 +192,21 @@
 						<div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
 							<Check class="h-5 w-5 text-primary" />
 						</div>
-						<h4 class="text-lg font-semibold">紹介者へのメリット</h4>
+						<h4 class="text-lg font-semibold">手数料の分配</h4>
 					</div>
 					<div class="space-y-3">
 						<div class="flex items-start gap-3">
 							<X class="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
 							<div>
 								<p class="font-medium">他サービス</p>
-								<p class="text-sm text-muted-foreground">プラットフォームが総取り</p>
+								<p class="text-sm text-muted-foreground">システム会社が総取り</p>
 							</div>
 						</div>
 						<div class="flex items-start gap-3">
 							<Check class="mt-0.5 h-5 w-5 shrink-0 text-primary" />
 							<div>
 								<p class="font-medium text-primary">BizGuild</p>
-								<p class="text-sm text-muted-foreground">成約の7%を紹介者に還元</p>
+								<p class="text-sm text-muted-foreground">運営者・紹介者と利益分配</p>
 							</div>
 						</div>
 					</div>

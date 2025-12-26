@@ -13,11 +13,15 @@
 		Wallet,
 		Users,
 		ArrowDown,
-		Calendar
+		Calendar,
+		Repeat
 	} from 'lucide-svelte';
 	import {
 		PLANS,
-		COMMISSION_RATES,
+		MIN_CONTRACT_MONTHS,
+		DEFAULT_REFERRER_COMMISSION,
+		SUBSCRIPTION_COMMISSION,
+		calcTotalCommissionRate,
 		formatPriceYen,
 		formatPercentInt
 	} from '$lib/constants/pricing';
@@ -31,8 +35,11 @@
 	$: if (isUnlocked) localUnlocked = true;
 	const exampleAmount = 1000000;
 	const simulationAmounts = [1000000, 2000000, 3000000, 5000000];
-	const totalCommission = exampleAmount * COMMISSION_RATES.referralOnly.total;
-	const referrerAmount = exampleAmount * COMMISSION_RATES.referralOnly.referrer;
+	// 例として紹介者手数料をデフォルト（7%）で計算
+	const exampleReferrerRate = DEFAULT_REFERRER_COMMISSION.referralOnly;
+	const exampleTotalRate = calcTotalCommissionRate(exampleReferrerRate);
+	const totalCommission = exampleAmount * exampleTotalRate;
+	const referrerAmount = exampleAmount * exampleReferrerRate;
 	const fixedOwnerAmount = exampleAmount * PLANS.fixed.ownerCommissionRate;
 	const fixedBizguildAmount = exampleAmount * PLANS.fixed.bizguildCommissionRate;
 	const revenueOwnerAmount = exampleAmount * PLANS.revenue.ownerCommissionRate;
@@ -75,7 +82,7 @@
 						onclick={() => (selectedPlan = 'revenue')}
 					>
 						<Percent class="h-4 w-4" />
-						レベニューシェア
+						バランス
 					</button>
 					<button
 						class="flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium transition-colors {selectedPlan ===
@@ -140,7 +147,9 @@
 											</span>
 										</div>
 										<p class="mt-1 text-xs text-muted-foreground">
-											※ リリース後{PLANS.fixed.monthlyFeeStartMonth}ヶ月目より発生
+											※ リリース{PLANS.fixed.monthlyFeeStartMonth === 1
+												? '月'
+												: `${PLANS.fixed.monthlyFeeStartMonth}ヶ月目`}より発生
 										</p>
 									</div>
 									<div class="rounded-lg bg-muted/50 p-3">
@@ -156,24 +165,6 @@
 									</div>
 								</div>
 
-								<div class="mt-6 space-y-3">
-									<h4 class="text-sm font-semibold text-primary">開発パートナー特典</h4>
-									<ul class="space-y-2 text-sm">
-										<li class="flex items-center gap-2">
-											<Check class="h-4 w-4 shrink-0 text-primary" />
-											<span>リリース後5ヶ月間、月額無料</span>
-										</li>
-										<li class="flex items-center gap-2">
-											<Check class="h-4 w-4 shrink-0 text-primary" />
-											<span>機能要望の優先反映</span>
-										</li>
-										<li class="flex items-center gap-2">
-											<Check class="h-4 w-4 shrink-0 text-primary" />
-											<span>ベータ機能の先行利用</span>
-										</li>
-									</ul>
-								</div>
-
 								<div class="mt-6 rounded-lg border border-primary/20 bg-primary/5 p-3">
 									<p class="text-center text-sm">
 										<span class="font-medium">こんな方に</span><br />
@@ -184,7 +175,7 @@
 						</Card.Root>
 					</div>
 
-					<!-- レベニューシェアプラン -->
+					<!-- バランスプラン -->
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<div
@@ -197,7 +188,7 @@
 						<Card.Root class="border-0 bg-transparent shadow-none">
 							{#if selectedPlan === 'revenue'}
 								<div class="absolute -top-3 left-1/2 -translate-x-1/2">
-									<Badge class="bg-primary text-primary-foreground">初期費用ゼロ</Badge>
+									<Badge class="bg-primary text-primary-foreground">バランス重視</Badge>
 								</div>
 							{/if}
 							<Card.Header class="text-center">
@@ -206,7 +197,7 @@
 								>
 									<Percent class="h-6 w-6 text-accent-foreground" />
 								</div>
-								<Card.Title class="text-xl">レベニューシェアプラン</Card.Title>
+								<Card.Title class="text-xl">バランスプラン</Card.Title>
 								<Card.Description>リスクを抑えて始めたい方に</Card.Description>
 							</Card.Header>
 							<Card.Content>
@@ -219,7 +210,7 @@
 											{PLANS.revenue.initialFee >= 10000 ? '万円' : '円'}
 										</span>
 									</div>
-									<p class="mt-1 text-sm text-muted-foreground">初期費用</p>
+									<p class="mt-1 text-sm text-muted-foreground">初期費用（税別）</p>
 								</div>
 
 								<div class="mt-6 space-y-2">
@@ -251,31 +242,12 @@
 									</div>
 								</div>
 
-								<div class="mt-6 space-y-3">
-									<h4 class="text-sm font-semibold text-primary">開発パートナー特典</h4>
-									<ul class="space-y-2 text-sm">
-										<li class="flex items-center gap-2">
-											<Check class="h-4 w-4 shrink-0 text-primary" />
-											<span>初期費用なしでスタート</span>
-										</li>
-										<li class="flex items-center gap-2">
-											<Check class="h-4 w-4 shrink-0 text-primary" />
-											<span>機能要望の優先反映</span>
-										</li>
-										<li class="flex items-center gap-2">
-											<Check class="h-4 w-4 shrink-0 text-primary" />
-											<span>ベータ機能の先行利用</span>
-										</li>
-									</ul>
-								</div>
-
 								<div class="mt-6 rounded-lg border border-accent/20 bg-accent/5 p-3">
 									<p class="text-center text-sm">
 										<span class="font-medium">こんな方に</span><br />
-										<span class="text-muted-foreground">まず試してから本格運用したい方</span>
-									</p>
-									<p class="mt-2 text-xs text-muted-foreground">
-										※ 月間成約100万円未満の場合、機能制限または追加料金が発生する場合があります
+										<span class="text-muted-foreground"
+											>初期費用と月額費用のバランスを重視する方</span
+										>
 									</p>
 								</div>
 							</Card.Content>
@@ -349,24 +321,6 @@
 									</div>
 								</div>
 
-								<div class="mt-6 space-y-3">
-									<h4 class="text-sm font-semibold text-primary">開発パートナー特典</h4>
-									<ul class="space-y-2 text-sm">
-										<li class="flex items-center gap-2">
-											<Check class="h-4 w-4 shrink-0 text-primary" />
-											<span>初期費用を抑えてスタート</span>
-										</li>
-										<li class="flex items-center gap-2">
-											<Check class="h-4 w-4 shrink-0 text-primary" />
-											<span>機能要望の優先反映</span>
-										</li>
-										<li class="flex items-center gap-2">
-											<Check class="h-4 w-4 shrink-0 text-primary" />
-											<span>ベータ機能の先行利用</span>
-										</li>
-									</ul>
-								</div>
-
 								<div class="mt-6 rounded-lg border border-accent/20 bg-accent/5 p-3">
 									<p class="text-center text-sm">
 										<span class="font-medium">こんな方に</span><br />
@@ -385,6 +339,9 @@
 						<div class="text-center">
 							<p class="text-sm text-muted-foreground">例：成約金額</p>
 							<p class="text-2xl font-bold">{formatPriceYen(exampleAmount)}</p>
+							<p class="mt-1 text-xs text-muted-foreground">
+								※ 紹介者手数料を{formatPercentInt(exampleReferrerRate)}に設定した場合
+							</p>
 						</div>
 
 						<div class="my-4 flex justify-center">
@@ -393,9 +350,12 @@
 
 						<div class="rounded-lg bg-muted/30 p-4">
 							<p class="mb-3 text-center text-sm font-medium">
-								手数料 {formatPercentInt(COMMISSION_RATES.referralOnly.total)}（{formatPriceYen(
+								合計手数料 {formatPercentInt(exampleTotalRate)}（{formatPriceYen(
 									totalCommission
 								)}）の分配
+								<span class="block text-xs text-muted-foreground">
+									※ 紹介者手数料は提供者が自由に設定可能（0%〜）
+								</span>
 							</p>
 
 							<div class="grid gap-4 sm:grid-cols-3">
@@ -410,14 +370,14 @@
 										<div class="flex items-center justify-between">
 											<span class="flex items-center gap-1.5">
 												<Users class="h-3.5 w-3.5" />
-												紹介者
+												紹介者（{formatPercentInt(exampleReferrerRate)}）
 											</span>
 											<span class="font-medium">{formatPriceYen(referrerAmount)}</span>
 										</div>
 										<div class="flex items-center justify-between">
 											<span class="flex items-center gap-1.5">
 												<Wallet class="h-3.5 w-3.5" />
-												運営者
+												運営者（{formatPercentInt(PLANS.fixed.ownerCommissionRate)}）
 											</span>
 											<span class="font-medium text-primary"
 												>{formatPriceYen(fixedOwnerAmount)}</span
@@ -426,34 +386,32 @@
 										<div class="flex items-center justify-between text-muted-foreground">
 											<span class="flex items-center gap-1.5">
 												<Rocket class="h-3.5 w-3.5" />
-												BizGuild
+												BizGuild（{formatPercentInt(PLANS.fixed.bizguildCommissionRate)}）
 											</span>
 											<span>{formatPriceYen(fixedBizguildAmount)}</span>
 										</div>
 									</div>
 								</div>
 
-								<!-- レベニューシェアの場合 -->
+								<!-- バランスプランの場合 -->
 								<div
 									class="rounded-lg border bg-background p-4 {selectedPlan === 'revenue'
 										? 'border-primary ring-2 ring-primary/20'
 										: ''}"
 								>
-									<p class="mb-3 text-center text-sm font-semibold text-primary">
-										レベニューシェア
-									</p>
+									<p class="mb-3 text-center text-sm font-semibold text-primary">バランスプラン</p>
 									<div class="space-y-2 text-sm">
 										<div class="flex items-center justify-between">
 											<span class="flex items-center gap-1.5">
 												<Users class="h-3.5 w-3.5" />
-												紹介者
+												紹介者（{formatPercentInt(exampleReferrerRate)}）
 											</span>
 											<span class="font-medium">{formatPriceYen(referrerAmount)}</span>
 										</div>
 										<div class="flex items-center justify-between">
 											<span class="flex items-center gap-1.5">
 												<Wallet class="h-3.5 w-3.5" />
-												運営者
+												運営者（{formatPercentInt(PLANS.revenue.ownerCommissionRate)}）
 											</span>
 											<span class="font-medium text-primary"
 												>{formatPriceYen(revenueOwnerAmount)}</span
@@ -462,7 +420,7 @@
 										<div class="flex items-center justify-between">
 											<span class="flex items-center gap-1.5">
 												<Rocket class="h-3.5 w-3.5" />
-												BizGuild
+												BizGuild（{formatPercentInt(PLANS.revenue.bizguildCommissionRate)}）
 											</span>
 											<span class="font-medium">{formatPriceYen(revenueBizguildAmount)}</span>
 										</div>
@@ -480,14 +438,14 @@
 										<div class="flex items-center justify-between">
 											<span class="flex items-center gap-1.5">
 												<Users class="h-3.5 w-3.5" />
-												紹介者
+												紹介者（{formatPercentInt(exampleReferrerRate)}）
 											</span>
 											<span class="font-medium">{formatPriceYen(referrerAmount)}</span>
 										</div>
 										<div class="flex items-center justify-between">
 											<span class="flex items-center gap-1.5">
 												<Wallet class="h-3.5 w-3.5" />
-												運営者
+												運営者（{formatPercentInt(PLANS.monthly.ownerCommissionRate)}）
 											</span>
 											<span class="font-medium text-primary"
 												>{formatPriceYen(monthlyOwnerAmount)}</span
@@ -496,7 +454,7 @@
 										<div class="flex items-center justify-between">
 											<span class="flex items-center gap-1.5">
 												<Rocket class="h-3.5 w-3.5" />
-												BizGuild
+												BizGuild（{formatPercentInt(PLANS.monthly.bizguildCommissionRate)}）
 											</span>
 											<span class="font-medium">{formatPriceYen(monthlyBizguildAmount)}</span>
 										</div>
@@ -508,7 +466,7 @@
 						<p class="mt-4 text-center text-sm text-muted-foreground">
 							サービス提供者の受取：<span class="font-medium text-foreground"
 								>{formatPriceYen(providerAmount)}</span
-							>
+							>（{formatPercentInt(1 - exampleTotalRate)}）
 						</p>
 					</div>
 				</div>
@@ -527,7 +485,7 @@
 									<tr class="border-b">
 										<th class="px-4 py-3 text-left font-semibold">月間成約金額</th>
 										<th class="px-4 py-3 text-center font-semibold">固定費プラン</th>
-										<th class="px-4 py-3 text-center font-semibold">レベニューシェア</th>
+										<th class="px-4 py-3 text-center font-semibold">バランスプラン</th>
 										<th class="px-4 py-3 text-center font-semibold">月額重視</th>
 									</tr>
 								</thead>
@@ -541,6 +499,10 @@
 												: null}
 										{@const revenueMonthlyProfit =
 											amount * PLANS.revenue.ownerCommissionRate - PLANS.revenue.monthlyFee}
+										{@const revenueRecoveryMonths =
+											revenueMonthlyProfit > 0
+												? Math.ceil(PLANS.revenue.initialFee / revenueMonthlyProfit)
+												: null}
 										{@const monthlyMonthlyProfit =
 											amount * PLANS.monthly.ownerCommissionRate - PLANS.monthly.monthlyFee}
 										{@const monthlyRecoveryMonths =
@@ -575,7 +537,9 @@
 															revenueMonthlyProfit
 														)}
 													</div>
-													<div class="text-xs text-muted-foreground">初期費用なし</div>
+													<div class="text-xs text-muted-foreground">
+														{revenueRecoveryMonths ? `回収: 約${revenueRecoveryMonths}ヶ月` : '-'}
+													</div>
 												</div>
 											</td>
 											<td class="px-4 py-3 text-center">
@@ -606,37 +570,133 @@
 								<ul class="ml-4 list-disc space-y-1">
 									<li>月間利益 = 手数料収入（運営者取り分） - 月額費用</li>
 									<li>回収期間 = 初期費用 ÷ 月間利益（小数点以下切り上げ）</li>
-									<li>すべて「紹介のみ」パターンで計算（手数料10%）</li>
-									<li>
-										リリース後6ヶ月目以降の月額費用を考慮（固定費プランのみ1〜5ヶ月目は月額0円）
-									</li>
+									<li>紹介者手数料は提供者が商品ごとに自由に設定可能</li>
 								</ul>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<!-- 共通条件 -->
-				<div class="mx-auto mt-10 max-w-2xl">
-					<Card.Root class="bg-background/50">
+				<!-- 月額課金オプション -->
+				<div class="mx-auto mt-12 max-w-3xl">
+					<h3 class="mb-6 text-center text-lg font-semibold">
+						<span class="flex items-center justify-center gap-2">
+							<Repeat class="h-5 w-5 text-primary" />
+							オプション：月額課金（コミュニティ参加費）
+						</span>
+					</h3>
+					<Card.Root>
 						<Card.Header class="pb-3">
-							<Card.Title class="text-center text-base">開発パートナー共通条件</Card.Title>
+							<Card.Description class="text-center">
+								メンバーからコミュニティ参加費として月額費用を徴収できます
+							</Card.Description>
 						</Card.Header>
 						<Card.Content>
-							<ul class="grid gap-2 text-sm text-muted-foreground sm:grid-cols-3">
-								<li class="flex items-center gap-2">
-									<Check class="h-4 w-4 shrink-0 text-primary" />
-									月2回のフィードバックMTG
-								</li>
-								<li class="flex items-center gap-2">
-									<Check class="h-4 w-4 shrink-0 text-primary" />
-									最低10名でテスト運用
-								</li>
-								<li class="flex items-center gap-2">
-									<Check class="h-4 w-4 shrink-0 text-primary" />
-									開発期間 約3〜4ヶ月
-								</li>
-							</ul>
+							<div class="rounded-lg bg-muted/50 p-4">
+								<div class="grid gap-4 sm:grid-cols-2">
+									<div class="rounded-lg border bg-background p-4 text-center">
+										<p class="text-sm text-muted-foreground">運営者の取り分</p>
+										<p class="mt-1 text-2xl font-bold text-primary">
+											{formatPercentInt(SUBSCRIPTION_COMMISSION.ownerRate)}
+										</p>
+									</div>
+									<div class="rounded-lg border bg-background p-4 text-center">
+										<p class="text-sm text-muted-foreground">BizGuildの取り分</p>
+										<p class="mt-1 text-2xl font-bold">
+											{formatPercentInt(SUBSCRIPTION_COMMISSION.bizguildRate)}
+										</p>
+									</div>
+								</div>
+
+								<div class="mt-4 rounded-lg border border-dashed bg-background/50 p-4">
+									<p class="mb-3 text-center text-sm font-medium">例：月額1万円の場合</p>
+									<div class="flex items-center justify-center gap-4 text-sm">
+										<div class="text-center">
+											<p class="text-muted-foreground">運営者</p>
+											<p class="font-semibold text-primary">
+												{formatPriceYen(10000 * SUBSCRIPTION_COMMISSION.ownerRate)}
+											</p>
+										</div>
+										<span class="text-muted-foreground">+</span>
+										<div class="text-center">
+											<p class="text-muted-foreground">BizGuild</p>
+											<p class="font-semibold">
+												{formatPriceYen(10000 * SUBSCRIPTION_COMMISSION.bizguildRate)}
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="mt-4 space-y-2 text-xs text-muted-foreground">
+								<p class="flex items-start gap-2">
+									<Check class="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+									<span>全プラン共通の分配率です</span>
+								</p>
+								<p class="flex items-start gap-2">
+									<Check class="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+									<span>月額費用の金額は運営者が自由に設定できます</span>
+								</p>
+								<p class="flex items-start gap-2">
+									<Check class="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+									<span>成約手数料とは別に、月額課金からも収益を得られます</span>
+								</p>
+							</div>
+						</Card.Content>
+					</Card.Root>
+				</div>
+
+				<!-- 共通条件・特典 -->
+				<div class="mx-auto mt-10 max-w-3xl">
+					<Card.Root class="bg-background/50">
+						<Card.Header class="pb-3">
+							<Card.Title class="text-center text-base">開発パートナー特典・条件</Card.Title>
+						</Card.Header>
+						<Card.Content class="space-y-4">
+							<!-- 特典（目立たせる） -->
+							<div class="rounded-lg border border-primary/20 bg-primary/5 p-4">
+								<h4 class="mb-3 text-center text-sm font-semibold text-primary">特典</h4>
+								<ul class="grid gap-2 text-sm sm:grid-cols-2">
+									<li class="flex items-center gap-2">
+										<Check class="h-4 w-4 shrink-0 text-primary" />
+										<span class="font-medium">ご自身の成約はBizGuild手数料なし</span>
+									</li>
+									<li class="flex items-center gap-2">
+										<Check class="h-4 w-4 shrink-0 text-primary" />
+										機能要望の優先反映
+									</li>
+									<li class="flex items-center gap-2">
+										<Check class="h-4 w-4 shrink-0 text-primary" />
+										ベータ機能の先行利用
+									</li>
+									<li class="flex items-center gap-2">
+										<Check class="h-4 w-4 shrink-0 text-primary" />
+										導入サポート（オンボーディング支援）
+									</li>
+								</ul>
+							</div>
+							<!-- 条件 -->
+							<div>
+								<h4 class="mb-3 text-center text-sm font-semibold text-muted-foreground">条件</h4>
+								<ul class="grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
+									<li class="flex items-center gap-2">
+										<Check class="h-4 w-4 shrink-0 text-primary" />
+										最低契約期間 {MIN_CONTRACT_MONTHS}ヶ月
+									</li>
+									<li class="flex items-center gap-2">
+										<Check class="h-4 w-4 shrink-0 text-primary" />
+										月2回のフィードバックMTG
+									</li>
+									<li class="flex items-center gap-2">
+										<Check class="h-4 w-4 shrink-0 text-primary" />
+										最低10名でテスト運用
+									</li>
+									<li class="flex items-center gap-2">
+										<Check class="h-4 w-4 shrink-0 text-primary" />
+										開発期間 約3〜4ヶ月
+									</li>
+								</ul>
+							</div>
 						</Card.Content>
 					</Card.Root>
 				</div>

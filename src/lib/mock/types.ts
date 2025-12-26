@@ -35,6 +35,9 @@ export interface Product {
 		mode: 'FIXED' | 'PERCENT';
 		value: number;
 	};
+	// 紹介者手数料率（未設定時はデフォルト値を使用）
+	referrerCommissionRate?: number; // 紹介のみ（デフォルト: 0.07 = 7%）
+	referrerCommissionRateClose?: number; // クロージング代行（デフォルト: 0.10 = 10%）
 	owner: User;
 	createdAt: string;
 }

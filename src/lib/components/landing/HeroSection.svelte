@@ -21,7 +21,7 @@
 				開発パートナー募集中
 			</Badge>
 
-			<h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+			<h1 class="text-4xl leading-[1.25] font-bold tracking-tight sm:text-5xl lg:text-6xl">
 				あなたのネットワークを、<br />
 				<span class="text-primary">ビジネスが生まれる場所に</span>
 			</h1>
