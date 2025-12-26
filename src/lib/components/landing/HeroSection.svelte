@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PUBLIC_FEEDBACK_URL } from '$env/static/public';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import { ArrowRight, Network, Users, Sparkles, ExternalLink } from 'lucide-svelte';
@@ -34,7 +35,7 @@
 			</p>
 
 			<div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-				<Button size="lg" href={resolve('/contact')} class="gap-2 px-8">
+				<Button size="lg" href={PUBLIC_FEEDBACK_URL} class="gap-2 px-8">
 					話を聞いてみる
 					<ArrowRight class="h-5 w-5" />
 				</Button>

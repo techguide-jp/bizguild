@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PUBLIC_FEEDBACK_URL } from '$env/static/public';
 	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -703,7 +704,7 @@
 
 				<!-- CTA -->
 				<div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-					<Button size="lg" class="gap-2 px-8" href={resolve('/contact')}>
+					<Button size="lg" class="gap-2 px-8" href={PUBLIC_FEEDBACK_URL}>
 						話を聞いてみる
 						<ArrowRight class="h-5 w-5" />
 					</Button>

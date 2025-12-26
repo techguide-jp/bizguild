@@ -302,10 +302,7 @@
 				<div class="mt-10">
 					{#if formUrl}
 						<div class="shadow-soft overflow-hidden rounded-2xl border bg-background">
-							<iframe
-								title="BizGuild メンバー登録フォーム"
-								src={formUrl}
-								class="h-[900px] w-full"
+							<iframe title="BizGuild メンバー登録フォーム" src={formUrl} class="h-[900px] w-full"
 							></iframe>
 						</div>
 					{:else}

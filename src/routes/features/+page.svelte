@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PUBLIC_FEEDBACK_URL } from '$env/static/public';
 	import { resolve } from '$app/paths';
 	import { LandingHeader, LandingFooter } from '$lib/components/landing';
 	import { Badge } from '$lib/components/ui/badge';
@@ -373,7 +374,7 @@
 					一緒に考えてみませんか？
 				</p>
 				<div class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-					<Button size="lg" variant="secondary" href={resolve('/contact')} class="gap-2 px-8">
+					<Button size="lg" variant="secondary" href={PUBLIC_FEEDBACK_URL} class="gap-2 px-8">
 						話を聞いてみる
 						<ArrowRight class="h-5 w-5" />
 					</Button>

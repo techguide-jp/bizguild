@@ -43,7 +43,10 @@ export default defineConfig(
 	},
 	{
 		// 汎用UIコンポーネントはhrefを呼び出し側で解決するため除外
-		files: ['src/lib/components/ui/button/button.svelte'],
+		files: [
+			'src/lib/components/ui/button/button.svelte',
+			'src/lib/components/ui/external-link/external-link.svelte'
+		],
 		rules: {
 			'svelte/no-navigation-without-resolve': 'off'
 		}

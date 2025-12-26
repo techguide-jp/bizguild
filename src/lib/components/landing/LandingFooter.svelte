@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { PUBLIC_FEEDBACK_URL } from '$env/static/public';
+	import { ExternalLink } from '$lib/components/ui/external-link';
 	import { resolve } from '$app/paths';
 	const currentYear = new Date().getFullYear();
 </script>
@@ -30,9 +32,12 @@
 						<a href={resolve('/features')} class="transition-colors hover:text-foreground">機能</a>
 					</li>
 					<li>
-						<a href={resolve('/contact')} class="transition-colors hover:text-foreground"
-							>お問い合わせ</a
+						<ExternalLink
+							href={PUBLIC_FEEDBACK_URL}
+							class="transition-colors hover:text-foreground"
 						>
+							お問い合わせ
+						</ExternalLink>
 					</li>
 					<li>
 						<a href={resolve('/')} class="transition-colors hover:text-foreground"

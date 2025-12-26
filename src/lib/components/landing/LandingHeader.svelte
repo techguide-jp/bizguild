@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { PUBLIC_FEEDBACK_URL } from '$env/static/public';
 	import { Button } from '$lib/components/ui/button';
-	import { ExternalLink } from 'lucide-svelte';
+	import { ExternalLink } from '$lib/components/ui/external-link';
+	import { ExternalLink as ExternalLinkIcon } from 'lucide-svelte';
 	import { resolve } from '$app/paths';
 </script>
 
@@ -32,12 +34,12 @@
 				<span>デモを見る</span>
 				<span class="rounded-full border px-1.5 py-0.5 text-[10px] font-medium">開発中</span>
 			</a>
-			<a
-				href={resolve('/contact')}
+			<ExternalLink
+				href={PUBLIC_FEEDBACK_URL}
 				class="text-sm text-muted-foreground transition-colors hover:text-foreground"
 			>
 				お問い合わせ
-			</a>
+			</ExternalLink>
 		</nav>
 		<div class="flex items-center gap-3">
 			<Button
@@ -48,9 +50,9 @@
 				class="hidden gap-1.5 sm:inline-flex"
 			>
 				デモを見る
-				<ExternalLink class="h-3.5 w-3.5" />
+				<ExternalLinkIcon class="h-3.5 w-3.5" />
 			</Button>
-			<Button href={resolve('/contact')}>話を聞いてみる</Button>
+			<Button href={PUBLIC_FEEDBACK_URL}>話を聞いてみる</Button>
 		</div>
 	</div>
 </header>
