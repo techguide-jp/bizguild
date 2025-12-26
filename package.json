@@ -69,6 +69,7 @@
 	"dependencies": {
 		"@lucia-auth/adapter-prisma": "^4.0.1",
 		"@prisma/client": "^7.2.0",
+		"@vercel/analytics": "^1.6.1",
 		"bits-ui": "^2.14.4",
 		"lucia": "^3.2.2",
 		"lucide-svelte": "^0.562.0",
