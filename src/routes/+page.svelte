@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { PUBLIC_WAITLIST_FORM_URL } from '$env/static/public';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/stores';
 	import { LandingFooter } from '$lib/components/landing';
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Card from '$lib/components/ui/card';
@@ -15,6 +16,14 @@
 		Quote,
 		Monitor
 	} from 'lucide-svelte';
+
+	const formUrl = $derived.by(() => {
+		if (!PUBLIC_WAITLIST_FORM_URL) return '';
+		const hasReferrer = $page.url.searchParams.get('referrer') === 'true';
+		if (!hasReferrer) return PUBLIC_WAITLIST_FORM_URL;
+		const separator = PUBLIC_WAITLIST_FORM_URL.includes('?') ? '&' : '?';
+		return `${PUBLIC_WAITLIST_FORM_URL}${separator}referrer=${encodeURIComponent('金城さやか')}`;
+	});
 </script>
 
 <svelte:head>
@@ -291,11 +300,11 @@
 				</div>
 
 				<div class="mt-10">
-					{#if PUBLIC_WAITLIST_FORM_URL}
+					{#if formUrl}
 						<div class="shadow-soft overflow-hidden rounded-2xl border bg-background">
 							<iframe
 								title="BizGuild メンバー登録フォーム"
-								src={PUBLIC_WAITLIST_FORM_URL}
+								src={formUrl}
 								class="h-[900px] w-full"
 							></iframe>
 						</div>
