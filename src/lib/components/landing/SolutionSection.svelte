@@ -38,18 +38,11 @@
 					</ul>
 				</div>
 				<div class="order-1 lg:order-2">
-					<div class="aspect-video rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 p-8">
-						<div class="flex h-full items-center justify-center">
-							<div class="text-center">
-								<div
-									class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-background shadow-lg"
-								>
-									<Users class="h-8 w-8 text-primary" />
-								</div>
-								<p class="text-sm font-medium text-muted-foreground">誰が何を得意か、すぐわかる</p>
-							</div>
-						</div>
-					</div>
+					<img
+						src="/images/landing/solution-skills.png"
+						alt="全員のスキル・サービスを一覧で把握"
+						class="aspect-video w-full rounded-2xl object-cover shadow-lg"
+					/>
 				</div>
 			</div>
 
@@ -80,18 +73,11 @@
 					</ul>
 				</div>
 				<div class="order-1">
-					<div class="aspect-video rounded-2xl bg-gradient-to-br from-accent/20 to-primary/20 p-8">
-						<div class="flex h-full items-center justify-center">
-							<div class="text-center">
-								<div
-									class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-background shadow-lg"
-								>
-									<Share2 class="h-8 w-8 text-primary" />
-								</div>
-								<p class="text-sm font-medium text-muted-foreground">紹介で双方にメリット</p>
-							</div>
-						</div>
-					</div>
+					<img
+						src="/images/landing/solution-referral.png"
+						alt="紹介の仕組みをシステム化"
+						class="aspect-video w-full rounded-2xl object-cover shadow-lg"
+					/>
 				</div>
 			</div>
 
@@ -122,18 +108,11 @@
 					</ul>
 				</div>
 				<div class="order-1 lg:order-2">
-					<div class="aspect-video rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 p-8">
-						<div class="flex h-full items-center justify-center">
-							<div class="text-center">
-								<div
-									class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-background shadow-lg"
-								>
-									<Shield class="h-8 w-8 text-primary" />
-								</div>
-								<p class="text-sm font-medium text-muted-foreground">信頼できるメンバーだけ</p>
-							</div>
-						</div>
-					</div>
+					<img
+						src="/images/landing/solution-quality.png"
+						alt="招待制・審査制で質を担保"
+						class="aspect-video w-full rounded-2xl object-cover shadow-lg"
+					/>
 				</div>
 			</div>
 		</div>
